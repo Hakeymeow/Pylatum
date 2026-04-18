@@ -1,0 +1,11 @@
+[project]
+name = "platenum"
+version = "0.1.0"
+description = "A learning project for calculating the number of theoretical plates in distillation columns"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[[tool.uv.index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+default = true
