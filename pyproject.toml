@@ -9,3 +9,8 @@ dependencies = []
 [[tool.uv.index]]
 url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
 default = true
+
+[tool.uv.workspace]
+members = [
+    "hybrid",
+]

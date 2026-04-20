@@ -2,6 +2,17 @@ version = 1
 revision = 3
 requires-python = ">=3.14"
 
+[manifest]
+members = [
+    "hybrid",
+    "platenum",
+]
+
+[[package]]
+name = "hybrid"
+version = "0.1.0"
+source = { virtual = "hybrid" }
+
 [[package]]
 name = "platenum"
 version = "0.1.0"
