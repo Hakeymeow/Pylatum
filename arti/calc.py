@@ -1,4 +1,8 @@
-def cross(l1, l2) -> (float, float):
+from typing import Callable
+plane = Callable[[float, float], float]
+line = Callable[[float], float]
+
+def cross(l1: plane, l2: plane) -> tuple[float, float]:
     c1, c2 = l1(0, 0), l2(0, 0)
     a1, a2 = l1(1, 0) - c1, l2(1, 0) - c2
     b1, b2 = l1(0, 1) - c1, l2(0, 1) - c2
@@ -7,20 +11,20 @@ def cross(l1, l2) -> (float, float):
         (c2 * a1 - c1 * a2) / (b1 * a2 - b2 * a1)
     )
 
-def rectiOpline(R: float, xD: float):
+def rectiOpline(R: float, xD: float) -> plane:
     return lambda x, y: R * x - (R+1) * y + xD
 
-def qline(q: float, xF: float):
+def qline(q: float, xF: float) -> plane:
     return lambda x, y: q * x - (q-1) * y - xF
 
-def striOpline(rl, ql, xW: float):
+def striOpline(rl: plane, ql: plane, xW: float) -> plane:
     xi, yi = cross(rl, ql)
     return lambda x, y: (yi-xW) * (x-xW) - (xi-xW) * (y-xW)
 
-def vlEqui(alpha: float):
+def vlEqui(alpha: float) -> line:
     return lambda y: y / (alpha - (alpha-1) * y)
 
-def rectify(rl, vle, xD: float, ql):
+def rectify(rl: plane, vle: line, xD: float, ql: plane) -> tuple[float, int]:
     xe, _ = cross(rl, ql)
     xj, i = vle(xD), 0
     while xj > xe:
@@ -29,7 +33,7 @@ def rectify(rl, vle, xD: float, ql):
         xj = vle(yj)
     return (xj, i)
 
-def strip(sl, vle, xj: float, xW: float):
+def strip(sl: plane, vle: line, xj: float, xW: float) -> tuple[float, int]:
     i = 0
     while xj > xW:
         i += 1
