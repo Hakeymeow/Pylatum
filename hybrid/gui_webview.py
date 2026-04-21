@@ -128,21 +128,40 @@ def calculate_plate_numbers(params: Dict[str, float]) -> Dict[str, Any]:
 
 def save_results_to_file(results_text: str) -> str:
     """Save calculation results to a text file."""
+    result = None
     try:
-        file_path = webview.windows[0].create_file_dialog(
-            webview.SAVE_DIALOG,
+        # Use the new FileDialog API
+        result = webview.windows[0].create_file_dialog(
+            webview.FileDialog.SAVE,
             directory='/',
             save_filename='distillation_results.txt',
             file_types=('Text files (*.txt)', 'All files (*.*)')
         )
-        if file_path:
-            with open(file_path, 'w') as f:
-                f.write(results_text)
-            return f"Results saved to {file_path}"
+        
+        # Handle the return value which could be a tuple or string
+        if result:
+            # Check if result is a tuple (path, filter_index)
+            if isinstance(result, tuple) and len(result) > 0:
+                file_path = result[0]
+            else:
+                file_path = result
+                
+            # Ensure file_path is a string
+            if file_path:
+                with open(file_path, 'w') as f:
+                    f.write(results_text)
+                return f"Results saved to {file_path}"
+            else:
+                return "Save cancelled"
         else:
             return "Save cancelled"
     except Exception as e:
-        return f"Error saving file: {str(e)}"
+        error_msg = f"Error saving file: {str(e)}"
+        if result is not None:
+            error_msg += f"\nReturn type: {type(result).__name__}\nReturn value: {result}"
+        print(error_msg, file=sys.stderr)
+        sys.stderr.flush()
+        return error_msg
 
 
 # HTML template with embedded JavaScript
@@ -502,7 +521,15 @@ HTML_TEMPLATE = """
                         // Check if error property exists
                         const errorMsg = result.error ? result.error : 'Unknown error';
                         // Debug: show result structure for troubleshooting
-                        const debugInfo = `Error: ${errorMsg} (result keys: ${Object.keys(result).join(', ')}, success type: ${typeof result.success})`;
+                        let debugInfo = `Error: ${errorMsg}`;
+                        try {
+                            debugInfo += ` (result keys: ${Object.keys(result).join(', ')}, success: ${result.success}, success type: ${typeof result.success})`;
+                            // Try to stringify for more details (limit length)
+                            const resultStr = JSON.stringify(result, null, 2).substring(0, 200);
+                            debugInfo += `\\nResult preview: ${resultStr}...`;
+                        } catch (e) {
+                            debugInfo += ` (cannot stringify: ${e.message})`;
+                        }
                         showStatus(debugInfo, true);
                     }
                 };
