@@ -1,26 +1,33 @@
 # Hybrid Package
 
-## Project Type
-Python distillation column calculator (theoretical plates computation).
-
-## Run Calculator
+## Run Commands
 ```bash
-cd /home/PomeloFish/Code/PlateNum/hybrid && uv run python calc.py
+cd /home/PomeloFish/Code/PlateNum/hybrid
+uv run python calc.py           # CLI calculator (prompts for inputs)
+uv run python gui_webview.py    # GUI (requires X11 display)
+ruff check .                    # Lint
 ```
-Then input: R, q, ɑ, xD, xF, xW (prompts displayed).
 
-## Python Version
-Requires Python 3.14 (check `.python-version`).
+## Parameters (McCabe-Thiele Method)
+| Symbol | Name | Typical Range |
+|--------|------|---------------|
+| R | Reflux Ratio | ≥ 0 |
+| q | Feed Thermal Condition | 0-2 |
+| α | Relative Volatility | > 1 |
+| xD | Distillate Composition | > xF |
+| xF | Feed Composition | xW < xF < xD |
+| xW | Bottoms Composition | < xF |
+
+GUI provides input validation; CLI assumes valid inputs.
 
 ## Package Manager
-uv workspace. Install deps with `uv sync`. Mirror configured in root `pyproject.toml`.
+uv workspace. Mirror configured in root `pyproject.toml`. Install deps with `uv sync`.
 
 ## Adding Dependencies
-Use `uv add <package>` from the `hybrid/` directory to add dependencies.
-This automatically updates `pyproject.toml` and the lockfile.
-
-## Testing
-No test framework configured yet.
+```bash
+cd /home/PomeloFish/Code/PlateNum/hybrid
+uv add <package>
+```
 
 ## Key Branch
 Active development on `dev-hybrid`.
