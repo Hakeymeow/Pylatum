@@ -3,4 +3,9 @@ name = "hybrid"
 version = "0.1.0"
 description = "A hybrid solution of artificial coding and vibe coding"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pyqt6>=6.11.0",
+    "pyqt6-webengine>=6.11.0",
+    "pywebview>=6.2.1",
+    "qtpy>=2.4.3",
+]
