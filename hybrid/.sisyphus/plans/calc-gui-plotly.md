@@ -62,18 +62,18 @@
 
 ## TODOs
 
-- [ ] 1. **添加 plotly 依赖**
+- [x] 1. **添加 plotly 依赖**
 
   **实现**:
   - 在 pyproject.toml 添加 plotly
 
-- [ ] 2. **calc_gui.py - 新增 Plotly HTML 生成**
+- [x] 2. **calc_gui.py - 新增 Plotly HTML 生成**
 
   **实现**:
   - 新增 `plotly_chart(R, q, alpha, xD, xF, xW)` 方法
   - 返回 Plotly 生成的完整 HTML 字符串
 
-- [ ] 3. **index.html - 显示 Plotly 图表**
+- [x] 3. **index.html - 显示 Plotly 图表**
 
   **实现**:
   - 移除 Canvas
@@ -92,6 +92,6 @@ uv run python calc_gui.py
 ```
 
 ### 最终检查表
-- [ ] Plotly 图表显示
-- [ ] 支持缩放、悬停交互
-- [ ] 点击计算后图表更新
+- [x] Plotly 图表显示
+- [x] 支持缩放、悬停交互
+- [x] 点击计算后图表更新
