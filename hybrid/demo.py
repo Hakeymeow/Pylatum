@@ -77,22 +77,24 @@ class Demostration(Scene):
         # draw rectification section
         xe, _ = cross(rl, ql)
         xi, yi = vley(xD), xD
+        di = Dot(axes.c2p(xD, xD), color=BLUE_A)
         li = Line(axes.c2p(xD, xD), axes.c2p(xi, yi))
-        self.play(Create(li))
+        self.play(di.animate.set_color(WHITE))
+        self.play(Create(li), MoveAlongPath(di, li))
         while xi > xe:
             self.play(li.animate.set_color(PURPLE_A))
             xj, yj = cross(rl, lambda x, y: x-xi)
-            self.play(Create(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=PURPLE_A)))
+            self.play(Create(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=PURPLE_A)), MoveAlongPath(di, Line(axes.c2p(xi, yi), axes.c2p(xj, yj))))
             xi, yi = vley(yj), yj
             li = Line(axes.c2p(xj, yj), axes.c2p(xi, yi))
-            self.play(Create(li))
+            self.play(Create(li), MoveAlongPath(di, li))
 
         # draw stripping section
         while xi > xW:
             self.play(li.animate.set_color(ORANGE))
             xj, yj = cross(sl, lambda x, y: x-xi)
-            self.play(Create(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=ORANGE)))
+            self.play(Create(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=ORANGE)), MoveAlongPath(di, Line(axes.c2p(xi, yi), axes.c2p(xj, yj))))
             xi, yi = vley(yj), yj
             li = Line(axes.c2p(xj, yj), axes.c2p(xi, yi))
-            self.play(Create(li))
+            self.play(Create(li), MoveAlongPath(di, li))
         self.wait()
