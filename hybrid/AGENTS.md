@@ -2,10 +2,9 @@
 
 ## Run Commands
 ```bash
-cd /home/PomeloFish/Code/PlateNum/hybrid
 uv run python calc.py           # CLI calculator (prompts for inputs)
 uv run python gui_webview.py    # GUI (requires X11 display)
-ruff check .                    # Lint
+uv run manim render demo.py Demostration  # Manim animation demo
 ```
 
 ## Parameters (McCabe-Thiele Method)
@@ -25,7 +24,6 @@ uv workspace. Mirror configured in root `pyproject.toml`. Install deps with `uv 
 
 ## Adding Dependencies
 ```bash
-cd /home/PomeloFish/Code/PlateNum/hybrid
 uv add <package>
 ```
 
