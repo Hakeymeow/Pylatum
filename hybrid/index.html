@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>McCabe-Thiele Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .top-section { display: flex; gap: 30px; align-items: flex-start; margin-bottom: 20px; }
+    .inputs { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+    .input-group { display: flex; align-items: center; gap: 5px; }
+    .input-group label { width: auto; white-space: nowrap; }
+    .input-group input { width: 80px; padding: 5px; }
+    .controls { display: flex; flex-direction: column; gap: 10px; }
+    button { padding: 8px 16px; }
+    #result { padding: 10px; background: #f0f0f0; display: inline-flex; gap: 10px; flex-wrap: wrap; }
+    .chart-section { text-align: center; }
+    canvas { border: 1px solid #ccc; background: #fff; }
+    .legend { margin-top: 10px; font-size: 12px; }
+    .legend-item { display: inline-block; margin-right: 15px; }
+    .legend-color { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <h1>McCabe-Thiele Calculator</h1>
+  <div class="top-section">
+    <div class="inputs">
+      <div class="input-group">
+        <label>R:</label>
+        <input type="number" id="R" step="0.1" min="0" value="2.0">
+      </div>
+      <div class="input-group">
+        <label>q:</label>
+        <input type="number" id="q" step="0.01" min="-1" max="2" value="0.5">
+      </div>
+      <div class="input-group">
+        <label>α:</label>
+        <input type="number" id="alpha" step="0.05" min="1.01" value="2.5">
+      </div>
+      <div class="input-group">
+        <label>xD:</label>
+        <input type="number" id="xD" step="0.01" min="0" max="1" value="0.95">
+      </div>
+      <div class="input-group">
+        <label>xF:</label>
+        <input type="number" id="xF" step="0.01" min="0" max="1" value="0.5">
+      </div>
+      <div class="input-group">
+        <label>xW:</label>
+        <input type="number" id="xW" step="0.01" min="0" max="1" value="0.1">
+      </div>
+      <div class="controls">
+        <button id="calculate">Calculate</button>
+        <div id="result"></div>
+      </div>
+    </div>
+  </div>
+  <div class="chart-section">
+    <canvas id="chart" width="500" height="500"></canvas>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-color" style="background:#888"></span>Diagonal</div>
+      <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Equilibrium</div>
+      <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>Rectifying</div>
+      <div class="legend-item"><span class="legend-color" style="background:#f1c40f"></span>q-line</div>
+      <div class="legend-item"><span class="legend-color" style="background:#27ae60"></span>Stripping</div>
+      <div class="legend-item"><span class="legend-color" style="background:#9b59b6"></span>Stepping</div>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    const margin = 40;
+    const size = canvas.width - 2 * margin;
+
+    function toCanvas(x, y) {
+      return {
+        x: margin + x * size,
+        y: canvas.height - margin - y * size
+      };
+    }
+
+    function drawLine(points, color, dashed = false) {
+      if (!points || points.length < 2) return;
+      ctx.beginPath();
+      const start = toCanvas(points[0][0], points[0][1]);
+      ctx.moveTo(start.x, start.y);
+      for (let i = 1; i < points.length; i++) {
+        const pt = toCanvas(points[i][0], points[i][1]);
+        ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      if (dashed) ctx.setLineDash([5, 5]);
+      else ctx.setLineDash([]);
+      ctx.stroke();
+    }
+
+    function drawAxes() {
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, canvas.height - margin);
+      ctx.lineTo(canvas.width - margin, canvas.height - margin);
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.stroke();
+      for (let i = 0; i <= 1; i += 0.1) {
+        const x = toCanvas(i, 0);
+        const y = toCanvas(0, i);
+        ctx.fillStyle = '#666';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(i.toFixed(1), x.x, x.y + 15);
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(i.toFixed(1), y.x - 5, y.y);
+      }
+      ctx.fillText('x', canvas.width - margin + 10, canvas.height - margin);
+      ctx.fillText('y', margin - 15, margin - 10);
+    }
+
+    function drawMcCabeThiele(data) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawAxes();
+      drawLine(data.diagonal, '#888');
+      drawLine(data.equilibrium, '#e74c3c');
+      drawLine(data.rectifying, '#3498db');
+      drawLine(data.qline, '#f1c40f');
+      drawLine(data.stripping, '#27ae60');
+      drawLine(data.stepping, '#9b59b6', true);
+    }
+
+    document.getElementById('calculate').addEventListener('click', async () => {
+      await doCalculate();
+    });
+
+    async function doCalculate() {
+      const R = parseFloat(document.getElementById('R').value);
+      const q = parseFloat(document.getElementById('q').value);
+      const alpha = parseFloat(document.getElementById('alpha').value);
+      const xD = parseFloat(document.getElementById('xD').value);
+      const xF = parseFloat(document.getElementById('xF').value);
+      const xW = parseFloat(document.getElementById('xW').value);
+      
+      try {
+        const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW);
+        document.getElementById('result').innerHTML = `
+          <span style="margin-right:15px">Nt: ${result.Nt}</span>
+          <span style="margin-right:15px">Nf: ${result.Nf}</span>
+          <span style="margin-right:15px">Nr: ${result.Nr}</span>
+          <span>Ns: ${result.Ns}</span>
+        `;
+        const vizData = await window.pywebview.api.visualization(R, q, alpha, xD, xF, xW);
+        drawMcCabeThiele(vizData);
+      } catch (e) {
+        document.getElementById('result').innerHTML = 'Error: ' + e;
+      }
+    }
+
+    document.addEventListener('pywebviewready', doCalculate);
+  </script>
+</body>
+</html>
