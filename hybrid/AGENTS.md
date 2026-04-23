@@ -3,7 +3,6 @@
 ## Run Commands
 ```bash
 uv run python calc.py           # CLI calculator (prompts for inputs)
-uv run python gui_webview.py    # GUI (requires X11 display)
 uv run manim render demo.py Demostration  # Manim animation demo
 ```
 
@@ -11,7 +10,7 @@ uv run manim render demo.py Demostration  # Manim animation demo
 | Symbol | Name | Typical Range |
 |--------|------|---------------|
 | R | Reflux Ratio | ≥ 0 |
-| q | Feed Thermal Condition | 0-2 |
+| q | Feed Thermal Condition |  |
 | α | Relative Volatility | > 1 |
 | xD | Distillate Composition | > xF |
 | xF | Feed Composition | xW < xF < xD |
@@ -26,6 +25,3 @@ uv workspace. Mirror configured in root `pyproject.toml`. Install deps with `uv 
 ```bash
 uv add <package>
 ```
-
-## Key Branch
-Active development on `dev-hybrid`.
