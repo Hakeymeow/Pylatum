@@ -75,7 +75,7 @@
         `;
         const chartData = await window.pywebview.api.plotly_chart(R, q, alpha, xD, xF, xW);
         const layout = { ...chartData.layout, width: undefined, height: undefined };
-        Plotly.react('chart', chartData.data, layout, {responsive: true, displayModeBar: false});
+        Plotly.react('chart', chartData.data, layout, {responsive: true, displayModeBar: true});
       } catch (e) {
         document.getElementById('result').innerHTML = 'Error: ' + e;
       }
