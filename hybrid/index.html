@@ -81,7 +81,11 @@
       }
     }
 
-    document.addEventListener('pywebviewready', doCalculate);
+    if (window.pywebview && window.pywebview.api) {
+      doCalculate();
+    } else {
+      window.addEventListener('pywebviewready', doCalculate);
+    }
   </script>
 </body>
 </html>
