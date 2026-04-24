@@ -6,3 +6,5 @@
 [GUI-pywebview[qt]](https://opncd.ai/share/BTdJ3FIB)
 
 [GUI-pywebview[gtk]](https://opncd.ai/share/AH5v4Pjk)
+
+[build-nuitka](https://opncd.ai/share/wiQoPYCb)
