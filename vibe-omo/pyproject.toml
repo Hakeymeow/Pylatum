@@ -3,4 +3,13 @@ name = "vibe-omo"
 version = "0.1.0"
 description = "A solution with pure vibe coding"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "numpy>=2.0",
+    "matplotlib>=3.8",
+]
+
+[project.scripts]
+distillation = "vibe_omo.distillation.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
