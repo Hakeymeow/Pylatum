@@ -6,50 +6,50 @@
   <script src="plotly.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    .top-section { display: flex; gap: 30px; align-items: flex-start; margin-bottom: 20px; }
-    .inputs { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
-    .input-group { display: flex; align-items: center; gap: 5px; }
-    .input-group label { width: auto; white-space: nowrap; }
-    .input-group input { width: 80px; padding: 5px; }
-    .controls { display: flex; flex-direction: column; gap: 10px; }
-    button { padding: 8px 16px; }
-    #result { padding: 10px; background: #f0f0f0; display: inline-flex; gap: 10px; flex-wrap: wrap; }
-    #chart { width: 500px; height: 500px; margin: 0 auto; }
+    .inputs-row { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 20px; }
+    .input-group { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 140px; }
+    .input-group label { font-size: 12px; color: #333; text-align: center; }
+    .input-group input { width: 80px; padding: 8px; text-align: center; }
+    .controls { display: flex; flex-direction: column; gap: 15px; }
+    #calculate { width: 100%; padding: 12px; }
+    #result { padding: 15px; background: #f0f0f0; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .result-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .result-item label { font-size: 12px; color: #666; }
+    .result-item span { font-size: 16px; font-weight: bold; }
+    #chart { width: 100%; height: auto; aspect-ratio: 1 / 1; margin: 0 auto; }
   </style>
 </head>
 <body>
   <h1>McCabe-Thiele Calculator</h1>
-  <div class="top-section">
-    <div class="inputs">
-      <div class="input-group">
-        <label>R:</label>
-        <input type="number" id="R" step="0.1" min="0" value="2.0">
-      </div>
-      <div class="input-group">
-        <label>q:</label>
-        <input type="number" id="q" step="0.01" min="-1" max="2" value="0.5">
-      </div>
-      <div class="input-group">
-        <label>α:</label>
-        <input type="number" id="alpha" step="0.05" min="1.01" value="2.5">
-      </div>
-      <div class="input-group">
-        <label>xD:</label>
-        <input type="number" id="xD" step="0.01" min="0" max="1" value="0.95">
-      </div>
-      <div class="input-group">
-        <label>xF:</label>
-        <input type="number" id="xF" step="0.01" min="0" max="1" value="0.5">
-      </div>
-      <div class="input-group">
-        <label>xW:</label>
-        <input type="number" id="xW" step="0.01" min="0" max="1" value="0.1">
-      </div>
-      <div class="controls">
-        <button id="calculate">Calculate</button>
-        <div id="result"></div>
-      </div>
+  <div class="inputs-row">
+    <div class="input-group">
+      <label>Reflux Ratio (R)</label>
+      <input type="number" id="R" step="0.1" min="0" value="2.0">
     </div>
+    <div class="input-group">
+      <label>Feed Condition (q)</label>
+      <input type="number" id="q" step="0.01" min="-1" max="2" value="0.5">
+    </div>
+    <div class="input-group">
+      <label>Volatility (α)</label>
+      <input type="number" id="alpha" step="0.05" min="1.01" value="2.5">
+    </div>
+    <div class="input-group">
+      <label>Distillate (xD)</label>
+      <input type="number" id="xD" step="0.01" min="0" max="1" value="0.95">
+    </div>
+    <div class="input-group">
+      <label>Feed (xF)</label>
+      <input type="number" id="xF" step="0.01" min="0" max="1" value="0.5">
+    </div>
+    <div class="input-group">
+      <label>Bottoms (xW)</label>
+      <input type="number" id="xW" step="0.01" min="0" max="1" value="0.1">
+    </div>
+  </div>
+  <div class="controls">
+    <button id="calculate">Calculate</button>
+    <div id="result"></div>
   </div>
   <div id="chart"></div>
   <script>
@@ -68,13 +68,14 @@
       try {
         const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW);
         document.getElementById('result').innerHTML = `
-          <span style="margin-right:15px">Nt: ${result.Nt}</span>
-          <span style="margin-right:15px">Nf: ${result.Nf}</span>
-          <span style="margin-right:15px">Nr: ${result.Nr}</span>
-          <span>Ns: ${result.Ns}</span>
+          <div class="result-item"><label>Total Plates (Nt)</label><span>${result.Nt}</span></div>
+          <div class="result-item"><label>Feed Plate (Nf)</label><span>${result.Nf}</span></div>
+          <div class="result-item"><label>Rectifying (Nr)</label><span>${result.Nr}</span></div>
+          <div class="result-item"><label>Stripping (Ns)</label><span>${result.Ns}</span></div>
         `;
         const chartData = await window.pywebview.api.plotly_chart(R, q, alpha, xD, xF, xW);
-        Plotly.react('chart', chartData.data, chartData.layout, {responsive: true});
+        const layout = { ...chartData.layout, width: undefined, height: undefined };
+        Plotly.react('chart', chartData.data, layout, {responsive: true, displayModeBar: false});
       } catch (e) {
         document.getElementById('result').innerHTML = 'Error: ' + e;
       }
