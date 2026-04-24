@@ -7,5 +7,5 @@ dependencies = [
     "manim>=0.20.1",
     "pywebview[gtk]>=6.2.1",
     "plotly>=5.0.0",
-    "nuitka>=4.0.8",
+    "nuitka[onefile]>=4.0.8",
 ]
