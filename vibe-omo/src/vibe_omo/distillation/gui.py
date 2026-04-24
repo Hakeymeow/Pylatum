@@ -19,7 +19,7 @@ from .core import McCabeThiele, McCabeThieleResult
 
 
 PRESETS = {
-    "苯-甲苯 (常压)": dict(xF=0.50, xD=0.95, xB=0.05, R=2.5, q=1.0, alpha=2.47),
+    "苯-甲苯 (常压)": dict(xF=0.45, xD=0.97, xB=0.02, R=2.0, q=1.0, alpha=2.50),
     "乙醇-水 (常压)": dict(xF=0.30, xD=0.85, xB=0.05, R=3.0, q=1.0, alpha=2.21),
     "甲醇-水 (常压)": dict(xF=0.40, xD=0.90, xB=0.05, R=2.0, q=1.0, alpha=3.72),
     "丙酮-苯 (常压)": dict(xF=0.45, xD=0.90, xB=0.05, R=2.0, q=1.2, alpha=2.10),
@@ -75,12 +75,12 @@ class DistillationGUI:
 
         self._entries = {}
         fields = [
-            ("xF", "进料组成 (轻组分摩尔分数):", 0.50),
-            ("xD", "馏出液组成:", 0.95),
-            ("xB", "釜液组成:", 0.05),
-            ("R",  "回流比 R:", 2.5),
+            ("xF", "进料组成 (轻组分摩尔分数):", 0.45),
+            ("xD", "馏出液组成:", 0.97),
+            ("xB", "釜液组成:", 0.02),
+            ("R",  "回流比 R:", 2.0),
             ("q",  "进料热状态 q:", 1.0),
-            ("alpha", "相对挥发度 α:", 2.47),
+            ("alpha", "相对挥发度 α:", 2.50),
         ]
 
         for key, label_text, default in fields:
@@ -122,6 +122,8 @@ class DistillationGUI:
         self._result_labels = {}
         result_fields = [
             ("n_stages", "理论塔板数 N:"),
+            ("n_rectifying", "精馏段塔板数:"),
+            ("n_stripping", "提馏段塔板数:"),
             ("feed_stage", "最佳进料位置:"),
             ("r_min", "最小回流比 R_min:"),
             ("n_min", "最小理论板数 N_min:"),
@@ -155,10 +157,10 @@ class DistillationGUI:
         self.ax.clear()
         self.ax.set_xlim(0, 1)
         self.ax.set_ylim(0, 1)
-        self.ax.set_xlabel("x (液相组成)")
-        self.ax.set_ylabel("y (气相组成)")
-        self.ax.set_title("McCabe-Thiele 图", fontsize=12)
-        self.ax.plot([0, 1], [0, 1], "k--", linewidth=0.8, label="对角线 y=x")
+        self.ax.set_xlabel("x (liquid mole fraction)")
+        self.ax.set_ylabel("y (vapor mole fraction)")
+        self.ax.set_title("McCabe-Thiele Diagram", fontsize=12)
+        self.ax.plot([0, 1], [0, 1], "k--", linewidth=0.8, label="Diagonal y=x")
         self.ax.legend(loc="lower right", fontsize=8)
         self.ax.grid(True, alpha=0.3)
         self.fig.tight_layout()
@@ -168,28 +170,28 @@ class DistillationGUI:
         self.ax.clear()
         ax = self.ax
 
-        ax.plot(result.x_eq, result.y_eq, "b-", linewidth=1.8, label="平衡曲线")
+        ax.plot(result.x_eq, result.y_eq, "b-", linewidth=1.8, label="Equilibrium curve")
 
         diag = np.linspace(0, 1, 200)
-        ax.plot(diag, diag, "k--", linewidth=0.8, label="对角线 y=x")
+        ax.plot(diag, diag, "k--", linewidth=0.8, label="Diagonal y=x")
 
         x_r = np.linspace(result.x_intersect, result.xD, 100)
         y_r = result.rectifying_slope * x_r + result.rectifying_intercept
-        ax.plot(x_r, y_r, "r-", linewidth=1.5, label="精馏段操作线")
+        ax.plot(x_r, y_r, "r-", linewidth=1.5, label="Rectifying line")
 
         x_s = np.linspace(result.xB, result.x_intersect, 100)
         y_s = result.stripping_slope * x_s + result.stripping_intercept
-        ax.plot(x_s, y_s, "g-", linewidth=1.5, label="提馏段操作线")
+        ax.plot(x_s, y_s, "g-", linewidth=1.5, label="Stripping line")
 
         if result.q_line_x_vertical is not None:
             ax.axvline(x=result.q_line_x_vertical, color="orange",
-                       linewidth=1.2, linestyle="--", label="q 线 (x=xF)")
+                       linewidth=1.2, linestyle="--", label="q-line (x=xF)")
         elif result.q_line_slope is not None:
             x_q = np.linspace(result.xB, result.xD, 100)
             b_q = result.y_intersect - result.q_line_slope * result.x_intersect
             y_q = result.q_line_slope * x_q + b_q
             ax.plot(x_q, y_q, color="orange", linewidth=1.2,
-                    linestyle="--", label="q 线")
+                    linestyle="--", label="q-line")
 
         sd = result.stage_data
         if len(sd) > 1:
@@ -224,10 +226,10 @@ class DistillationGUI:
 
         ax.set_xlim(-0.02, 1.02)
         ax.set_ylim(-0.02, 1.02)
-        ax.set_xlabel("x (液相摩尔分数)", fontsize=10)
-        ax.set_ylabel("y (气相摩尔分数)", fontsize=10)
+        ax.set_xlabel("x (liquid mole fraction)", fontsize=10)
+        ax.set_ylabel("y (vapor mole fraction)", fontsize=10)
         ax.set_title(
-            f"McCabe-Thiele 图 — 理论板数 N={result.n_stages}  进料位置={result.feed_stage}",
+            f"McCabe-Thiele Diagram — N={result.n_stages}  Feed={result.feed_stage}",
             fontsize=12
         )
         ax.legend(loc="lower right", fontsize=8)
@@ -278,6 +280,8 @@ class DistillationGUI:
         self._result = result
 
         self._result_labels["n_stages"].config(text=str(result.n_stages))
+        self._result_labels["n_rectifying"].config(text=str(result.n_rectifying))
+        self._result_labels["n_stripping"].config(text=str(result.n_stripping))
         self._result_labels["feed_stage"].config(text=str(result.feed_stage))
         self._result_labels["r_min"].config(text=f"{result.r_min:.4f}")
         self._result_labels["n_min"].config(text=str(result.n_min))

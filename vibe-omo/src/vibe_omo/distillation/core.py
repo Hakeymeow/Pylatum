@@ -23,6 +23,12 @@ class McCabeThieleResult:
     n_stages: int
     """理论塔板数（含再沸器时扣除）"""
 
+    n_rectifying: int
+    """精馏段塔板数（进料板以上）"""
+
+    n_stripping: int
+    """提馏段塔板数（进料板及以下）"""
+
     feed_stage: int
     """最佳进料位置（从上往下数，1-indexed）"""
 
@@ -291,9 +297,14 @@ class McCabeThiele:
             full_path.append((x_prev, y_op))
             full_path.append((x_curr, y_op))
 
+        n_rectifying = feed_stage - 1
+        n_stripping = stages - feed_stage + 1
+
         return (
             stages,
             feed_stage,
+            n_rectifying,
+            n_stripping,
             np.array(full_path),
             x_eq,
             y_eq,
@@ -308,65 +319,7 @@ class McCabeThiele:
             True,
         )
 
-        x = float(self.xD)
-        stages = 0
-        feed_stage = 1
-        cross_feed = False
-        stage_data = [(float(self.xD), float(self.xD))]
-
-        while x > self.xB + 1e-8:
-            y_eq_val = float(np.interp(x, x_eq, y_eq))
-
-            stage_data.append((x, y_eq_val))
-
-            # 检测是否跨过进料位置
-            if not cross_feed and x <= x_int:
-                cross_feed = True
-                feed_stage = stages + 1
-
-            if not cross_feed:
-                x_next = self._rectifying_x(y_eq_val)
-            else:
-                x_next = self._stripping_x(y_eq_val, slope_s, intercept_s)
-
-            stage_data.append((x_next, y_eq_val))
-            stages += 1
-            x = x_next
-
-            if stages >= max_stages:
-                return (
-                    stages,
-                    feed_stage,
-                    np.array(stage_data),
-                    x_eq,
-                    y_eq,
-                    x_int,
-                    y_int,
-                    a_r,
-                    b_r,
-                    slope_s,
-                    intercept_s,
-                    q_slope,
-                    q_vertical,
-                    False,
-                )
-
-        return (
-            stages,
-            feed_stage,
-            np.array(stage_data),
-            x_eq,
-            y_eq,
-            x_int,
-            y_int,
-            a_r,
-            b_r,
-            slope_s,
-            intercept_s,
-            q_slope,
-            q_vertical,
-            True,
-        )
+        
 
     def calculate(self) -> McCabeThieleResult:
         """执行完整计算。
@@ -392,6 +345,8 @@ class McCabeThiele:
         (
             n_stages,
             feed_stage,
+            n_rectifying,
+            n_stripping,
             stage_data,
             x_eq,
             y_eq,
@@ -411,6 +366,8 @@ class McCabeThiele:
 
         return McCabeThieleResult(
             n_stages=n_stages,
+            n_rectifying=n_rectifying,
+            n_stripping=n_stripping,
             feed_stage=feed_stage,
             stage_data=stage_data,
             x_eq=x_eq,
