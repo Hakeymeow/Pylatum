@@ -28,7 +28,9 @@ def build():
     ]
 
     print("Building:", " ".join(cmd))
-    return subprocess.run(cmd, cwd=SCRIPT_DIR).returncode
+    if not os.path.exists(SCRIPT_DIR/"build"):
+        os.mkdir(SCRIPT_DIR/"build")
+    return subprocess.run(cmd, cwd=SCRIPT_DIR/"build").returncode
 
 if __name__ == "__main__":
     sys.exit(build())

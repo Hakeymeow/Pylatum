@@ -1,6 +1,16 @@
 import webview
 import calc
 import numpy as np
+import sys
+import os
+
+
+def get_resource_path(filename: str) -> str:
+    if getattr(sys, 'frozen', False):
+        meipass = getattr(sys, '_MEIPASS', None)
+        if meipass:
+            return os.path.join(meipass, filename)
+    return os.path.join(os.path.dirname(__file__), filename)
 
 
 class Api:
@@ -78,7 +88,7 @@ if __name__ == "__main__":
     api = Api()
     webview.create_window(
         "McCabe-Thiele Calculator",
-        url="index.html",
+        url=get_resource_path("index.html"),
         js_api=api
     )
     webview.start()
