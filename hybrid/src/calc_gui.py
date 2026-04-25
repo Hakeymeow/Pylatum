@@ -24,6 +24,7 @@ class Api:
         xm, m = calc.strip(sl=sl, vle=vle, xj=xn)
 
         return {
+            "Rm": calc.minR(alpha, xD, q, xF),
             "Nt": n + m,
             "Nf": n + 1,
             "Nr": n,

@@ -68,6 +68,7 @@
       try {
         const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW);
         document.getElementById('result').innerHTML = `
+          <div class="result-item"><label>Minium Reflux (Rm)</label><span>${result.Rm.toFixed(3)}</span></div>
           <div class="result-item"><label>Total Plates (Nt)</label><span>${result.Nt}</span></div>
           <div class="result-item"><label>Feed Plate (Nf)</label><span>${result.Nf}</span></div>
           <div class="result-item"><label>Rectifying (Nr)</label><span>${result.Nr}</span></div>

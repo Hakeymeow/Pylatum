@@ -1,3 +1,4 @@
+import math
 from tqdm import tqdm
 from typing import Callable
 plane = Callable[[float, float], float]
@@ -24,6 +25,15 @@ def striOpline(rl: plane, ql: plane, xW: float) -> plane:
 
 def vlEqui(alpha: float) -> line:
     return lambda y: y / (alpha - (alpha-1) * y)
+
+def minR(alpha: float, xD: float, q: float, xF: float) -> float:
+    if q == 1:
+        x, y = xF, alpha * xF / (1+(alpha-1)*xF)
+    else:
+        a, b, c = (alpha-1) * q, alpha * (1-q-xF), -xF
+        x = (math.sqrt(b*b-4*a*c) - b) / 2*a
+        y = alpha * x / (1+(alpha-1)*x)
+    return (xD-y) / (y-x)
 
 def rectify(rl: plane, vle: line, ql: plane) -> tuple[float, int]:
     xe, _ = cross(rl, ql)
@@ -61,13 +71,17 @@ def main():
     parser.add_argument("--xW", type=float, help="composition of the bottom residue", default=0.02)
     args = parser.parse_args()
 
-    rl = rectiOpline(R=args.R, xD=args.xD)
-    ql = qline(q=args.q, xF=args.xF)
-    sl = striOpline(rl=rl, ql=ql, xW=args.xW)
-    vle = vlEqui(alpha=args.alpha)
-
-    xn, n = rectify(rl=rl, vle=vle, ql=ql)
-    xm, m = strip(sl=sl, vle=vle, xj=xn)
+    Rm = minR(args.alpha, args.xD, args.q, args.xF)
+    if args.R < Rm:
+        n = m = float('inf')
+        print("\x1b[33;1m" + "Warning: R is smaller than Rm" + "\x1b[0m")
+    else:
+        rl = rectiOpline(R=args.R, xD=args.xD)
+        ql = qline(q=args.q, xF=args.xF)
+        sl = striOpline(rl=rl, ql=ql, xW=args.xW)
+        vle = vlEqui(alpha=args.alpha)
+        xn, n = rectify(rl=rl, vle=vle, ql=ql)
+        xm, m = strip(sl=sl, vle=vle, xj=xn)
 
     print("=" * 48)
     print("Arguments\n---")
@@ -75,6 +89,7 @@ def main():
     print(f"{f"xD={args.xD}":<16}{f"xF={args.xF}":<16}{f"xW={args.xW}":<16}")
     print("=" * 48)
     print("Calculation Results\n---")
+    print(f"{"Rm (Minimum Reflux Ration)":<30} : {Rm}")
     print(f"{"Nt (Total Number)":<30} : {n+m}")
     print(f"{"Nf (Feed Location)":<30} : {n+1}")
     print(f"{"Nr (Rectifying)":<30} : {n}")
