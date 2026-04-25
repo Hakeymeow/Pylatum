@@ -5,7 +5,7 @@ requires-python = ">=3.14"
 [manifest]
 members = [
     "hybrid",
-    "platenum",
+    "pylatum",
 ]
 
 [[package]]
@@ -185,7 +185,7 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/3a/80/82
 [[package]]
 name = "hybrid"
 version = "0.1.0"
-source = { virtual = "hybrid" }
+source = { editable = "hybrid" }
 dependencies = [
     { name = "manim" },
     { name = "nuitka", extra = ["onefile"] },
@@ -396,11 +396,11 @@ wheels = [
 
 [[package]]
 name = "packaging"
-version = "26.1"
+version = "26.2"
 source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/" }
-sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/df/de/0d2b39fb4af88a0258f3bac87dfcbb48e73fbdea4a2ed0e2213f9a4c2f9a/packaging-26.1.tar.gz", hash = "sha256:f042152b681c4bfac5cae2742a55e103d27ab2ec0f3d88037136b6bfe7c9c5de", size = 215519, upload-time = "2026-04-14T21:12:49.362Z" }
+sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/d7/f1/e7a6dd94a8d4a5626c03e4e99c87f241ba9e350cd9e6d75123f992427270/packaging-26.2.tar.gz", hash = "sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661", size = 228134, upload-time = "2026-04-24T20:15:23.917Z" }
 wheels = [
-    { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/7a/c2/920ef838e2f0028c8262f16101ec09ebd5969864e5a64c4c05fad0617c56/packaging-26.1-py3-none-any.whl", hash = "sha256:5d9c0669c6285e491e0ced2eee587eaf67b670d94a19e94e3984a481aba6802f", size = 95831, upload-time = "2026-04-14T21:12:47.56Z" },
+    { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/df/b2/87e62e8c3e2f4b32e5fe99e0b86d576da1312593b39f47d8ceef365e95ed/packaging-26.2-py3-none-any.whl", hash = "sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e", size = 100195, upload-time = "2026-04-24T20:15:22.081Z" },
 ]
 
 [[package]]
@@ -435,11 +435,6 @@ wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/ba/13/306d275efd3a3453f72114b7431c877d10b1154014c1ebbedd067770d629/pillow-12.2.0-cp314-cp314t-win_amd64.whl", hash = "sha256:6562ace0d3fb5f20ed7290f1f929cae41b25ae29528f2af1722966a0a02e2aa1", size = 7225152, upload-time = "2026-04-01T14:45:50.032Z" },
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/ff/6e/cf826fae916b8658848d7b9f38d88da6396895c676e8086fc0988073aaf8/pillow-12.2.0-cp314-cp314t-win_arm64.whl", hash = "sha256:aa88ccfe4e32d362816319ed727a004423aab09c5cea43c01a4b435643fa34eb", size = 2556579, upload-time = "2026-04-01T14:45:52.529Z" },
 ]
-
-[[package]]
-name = "platenum"
-version = "0.1.0"
-source = { virtual = "." }
 
 [[package]]
 name = "plotly"
@@ -554,6 +549,11 @@ dependencies = [
     { name = "typing-extensions" },
 ]
 sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/2d/1c/317ccaaa6a3ddce270652781cf09d3b1d5d343b1a1dabca304fe5c218474/pygobject_stubs-2.16.0.tar.gz", hash = "sha256:a97574616e92ef458605f9520d8d9db4c2a131affcd12fdd51db0b42395291e9", size = 934833, upload-time = "2025-12-08T20:33:33.876Z" }
+
+[[package]]
+name = "pylatum"
+version = "0.1.0"
+source = { virtual = "." }
 
 [[package]]
 name = "pyobjc-core"

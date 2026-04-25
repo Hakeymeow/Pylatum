@@ -83,8 +83,7 @@ class Api:
 
         return {"data": traces, "layout": layout}
 
-
-if __name__ == "__main__":
+def main():
     api = Api()
     webview.create_window(
         "McCabe-Thiele Calculator",
@@ -92,3 +91,6 @@ if __name__ == "__main__":
         js_api=api
     )
     webview.start()
+
+if __name__ == "__main__":
+    main()

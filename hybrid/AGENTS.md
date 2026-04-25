@@ -3,8 +3,8 @@
 ## Run Commands
 ```bash
 uv run python calc.py           # CLI calculator (prompts for inputs)
-uv run python calc_gui.py       # GUI (pywebview + Plotly)
-uv run manim render demo.py Demostration  # Manim animation demo
+uv run hy-gui                   # GUI (pywebview + Plotly)
+uv run hy-render                # Manim animation demo
 ```
 
 ## Package Structure
@@ -17,7 +17,7 @@ uv run manim render demo.py Demostration  # Manim animation demo
 | Symbol | Name | Typical Range |
 |--------|------|---------------|
 | R | Reflux Ratio | ≥ 0 |
-| q | Feed Thermal Condition |  |
+| q | Feed Thermal Condition | / |
 | α | Relative Volatility | > 1 |
 | xD | Distillate Composition | > xF |
 | xF | Feed Composition | xW < xF < xD |
@@ -39,9 +39,6 @@ uv add <package> # Add new package from hybrid/
 - pywebview[gtk] >= 6.2.1 (GUI)
 - plotly >= 5.0.0 (charts)
 - numpy (implicit via dependencies)
-
-## Manim Config
-`manim.cfg` - 1080p60, black background. Animation renders to `demo/media/`.
 
 ## Python Version
 Requires Python >= 3.14

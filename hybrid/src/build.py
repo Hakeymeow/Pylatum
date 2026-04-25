@@ -30,7 +30,11 @@ def build():
     print("Building:", " ".join(cmd))
     if not os.path.exists(SCRIPT_DIR/"build"):
         os.mkdir(SCRIPT_DIR/"build")
+    print("\x1b[1;32m" + f"Artifact location: {SCRIPT_DIR/"build"}" + "\x1b[0m")
     return subprocess.run(cmd, cwd=SCRIPT_DIR/"build").returncode
+
+def main():
+    sys.exit(build())
 
 if __name__ == "__main__":
     sys.exit(build())

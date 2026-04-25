@@ -98,3 +98,16 @@ class Demostration(Scene):
             li = Line(axes.c2p(xj, yj), axes.c2p(xi, yi))
             self.play(Create(li), MoveAlongPath(di, li))
         self.wait()
+
+
+def main():
+    import subprocess
+    import os
+
+    demoPath = os.path.dirname(os.path.dirname(__file__)) + os.sep + "demo"
+    os.makedirs(demoPath, exist_ok=True)
+    cmd = ["manim", "-pqh", __file__, Demostration.__name__]
+    subprocess.run(cmd, cwd=demoPath, check=True)
+
+if __name__ == "__main__":
+    main()
