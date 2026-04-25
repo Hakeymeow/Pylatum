@@ -15,16 +15,9 @@ def get_resource_path(filename: str) -> str:
 
 class Api:
     def calculate(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> dict:
-        rl = calc.rectiOpline(R=R, xD=xD)
-        ql = calc.qline(q=q, xF=xF)
-        sl = calc.striOpline(rl=rl, ql=ql, xW=xW)
-        vle = calc.vlEqui(alpha=alpha)
-
-        xn, n = calc.rectify(rl=rl, vle=vle, ql=ql)
-        xm, m = calc.strip(sl=sl, vle=vle, xj=xn)
-
+        Rm, n, m = calc.calculate(R, q, alpha, xD, xF, xW)
         return {
-            "Rm": calc.minR(alpha, xD, q, xF),
+            "Rm": Rm,
             "Nt": n + m,
             "Nf": n + 1,
             "Nr": n,

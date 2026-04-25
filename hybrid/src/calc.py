@@ -57,7 +57,17 @@ def strip(sl: plane, vle: line, xj: float) -> tuple[float, int]:
             pbar.update(1)
     return (xj, i)
 
-
+def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> tuple[float, float, float]:
+    Rm = minR(alpha, xD, q, xF)
+    if R < minR(alpha, xD, q, xF):
+        return (Rm, float('inf'), float('inf'))
+    rl = rectiOpline(R=R, xD=xD)
+    ql = qline(q=q, xF=xF)
+    sl = striOpline(rl=rl, ql=ql, xW=xW)
+    vle = vlEqui(alpha=alpha)
+    xn, n = rectify(rl=rl, vle=vle, ql=ql)
+    xm, m = strip(sl=sl, vle=vle, xj=xn)
+    return (Rm, n, m)
 
 def main():
 
@@ -71,17 +81,7 @@ def main():
     parser.add_argument("--xW", type=float, help="composition of the bottom residue", default=0.02)
     args = parser.parse_args()
 
-    Rm = minR(args.alpha, args.xD, args.q, args.xF)
-    if args.R < Rm:
-        n = m = float('inf')
-        print("\x1b[33;1m" + "Warning: R is smaller than Rm" + "\x1b[0m")
-    else:
-        rl = rectiOpline(R=args.R, xD=args.xD)
-        ql = qline(q=args.q, xF=args.xF)
-        sl = striOpline(rl=rl, ql=ql, xW=args.xW)
-        vle = vlEqui(alpha=args.alpha)
-        xn, n = rectify(rl=rl, vle=vle, ql=ql)
-        xm, m = strip(sl=sl, vle=vle, xj=xn)
+    Rm, n, m = calculate(args.R, args.q, args.alpha, args.xD, args.xF, args.xW)
 
     print("=" * 48)
     print("Arguments\n---")
@@ -89,7 +89,7 @@ def main():
     print(f"{f"xD={args.xD}":<16}{f"xF={args.xF}":<16}{f"xW={args.xW}":<16}")
     print("=" * 48)
     print("Calculation Results\n---")
-    print(f"{"Rm (Minimum Reflux Ration)":<30} : {Rm}")
+    print(f"{"Rm (Minimum Reflux Ration)":<30} : {Rm:.12f}")
     print(f"{"Nt (Total Number)":<30} : {n+m}")
     print(f"{"Nf (Feed Location)":<30} : {n+1}")
     print(f"{"Nr (Rectifying)":<30} : {n}")
