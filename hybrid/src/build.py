@@ -1,40 +1,49 @@
-import os
-import sys
-import subprocess
-from pathlib import Path
+import os, sys, subprocess
+from argparse import ArgumentParser
+PROJECT_ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
+SRC_DIR = os.path.join(PROJECT_ROOT_DIR, "src")
+BUILD_DIR = os.path.join(PROJECT_ROOT_DIR, "build")
 
-SCRIPT_DIR = Path(__file__).parent.parent.resolve()
-DIST_DIR = SCRIPT_DIR / "dist"
-INDEX_HTML = SCRIPT_DIR  / "src" / "index.html"
-PLOTLY_JS = SCRIPT_DIR  / "src" / "plotly.min.js"
-PYSRC = SCRIPT_DIR  / "src" / "calc_gui.py"
+BASIC_CMD = [
+    "python", "-m", "nuitka", "--standalone", "--onefile"
+]
 
-def build():
-    if DIST_DIR.exists():
-        import shutil
-        shutil.rmtree(DIST_DIR)
-
-    cmd = [
-        "python", "-m", "nuitka",
-        "--standalone",
-        "--onefile",
-        "--include-module=webview",
-        "--include-module=numpy",
-        f"--include-data-files={INDEX_HTML}=.",
-        f"--include-data-files={PLOTLY_JS}=.",
-        "--assume-yes-for-downloads",
-        "--output-filename=pylatum",
-        f"{PYSRC}"
+def buildGUI():
+    guicmd = BASIC_CMD + [
+        f"--include-module={m}" for m in ("webview", "numpy")
+    ] + [
+        f"--include-data-files={os.path.join(SRC_DIR, f)}=."
+        for f in ("index.html", "plotly.min.js")
+    ] + [
+        "--output-filename=pylatum-gui",
+        os.path.join(SRC_DIR, "calc_gui.py")
     ]
+    print("\x1b[1;32m", "Building:", " ".join(guicmd), "\x1b[0m")
+    return subprocess.run(guicmd, cwd=BUILD_DIR).returncode
 
-    print("Building:", " ".join(cmd))
-    if not os.path.exists(SCRIPT_DIR/"build"):
-        os.mkdir(SCRIPT_DIR/"build")
-    print("\x1b[1;32m" + f"Artifact location: {SCRIPT_DIR/"build"}" + "\x1b[0m")
-    return subprocess.run(cmd, cwd=SCRIPT_DIR/"build").returncode
+def buildCLI():
+    clicmd = BASIC_CMD + [
+        "--output-filename=pylatum-cli",
+        os.path.join(SRC_DIR, "calc.py")
+    ]
+    print("\x1b[1;32m", "Building:", " ".join(clicmd), "\x1b[0m")
+    return subprocess.run(clicmd, cwd=BUILD_DIR).returncode
 
 def main():
-    sys.exit(build())
+    parser = ArgumentParser()
+    parser.add_argument("--cli", "-c", action="store_true", help="build cli pylatum")
+    parser.add_argument("--gui", "-g", action="store_true", help="build gui pylatum")
+    args = parser.parse_args()
+
+    exitCode = 0
+    if args.cli or args.gui:
+        os.makedirs(BUILD_DIR, exist_ok=True)
+    if args.cli:
+        exitCode = buildCLI() or exitCode
+    if args.gui:
+        exitCode = buildGUI() or exitCode
+    print("\x1b[1;32m", "Artifact location:", BUILD_DIR, "\x1b[0m")
+    sys.exit(exitCode)
 
 if __name__ == "__main__":
-    sys.exit(build())
+    main()
