@@ -2,7 +2,7 @@
 
 ## Run Commands
 ```bash
-uv run python calc.py           # CLI calculator (prompts for inputs)
+uv run hy-cli                  # CLI calculator 
 uv run hy-gui                   # GUI (pywebview + Plotly)
 uv run hy-render                # Manim animation demo
 ```

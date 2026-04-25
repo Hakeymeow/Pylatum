@@ -11,6 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
+hy-cli = "calc:main"
 hy-gui = "calc_gui:main"
 hy-build = "build:main"
 hy-render = "demo:main"
