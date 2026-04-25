@@ -20,8 +20,8 @@ class Api:
         sl = calc.striOpline(rl=rl, ql=ql, xW=xW)
         vle = calc.vlEqui(alpha=alpha)
 
-        xn, n = calc.rectify(rl=rl, vle=vle, xD=xD, ql=ql)
-        xm, m = calc.strip(sl=sl, vle=vle, xj=xn, xW=xW)
+        xn, n = calc.rectify(rl=rl, vle=vle, ql=ql)
+        xm, m = calc.strip(sl=sl, vle=vle, xj=xn)
 
         return {
             "Nt": n + m,

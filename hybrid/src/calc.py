@@ -24,16 +24,17 @@ def striOpline(rl: plane, ql: plane, xW: float) -> plane:
 def vlEqui(alpha: float) -> line:
     return lambda y: y / (alpha - (alpha-1) * y)
 
-def rectify(rl: plane, vle: line, xD: float, ql: plane) -> tuple[float, int]:
+def rectify(rl: plane, vle: line, ql: plane) -> tuple[float, int]:
     xe, _ = cross(rl, ql)
-    xj, i = vle(xD), 0
+    xj, i = vle(rl(0, 0)), 0
     while xj > xe:
         i += 1
         _, yj = cross(rl, lambda x, y: x-xj)
         xj = vle(yj)
     return (xj, i)
 
-def strip(sl: plane, vle: line, xj: float, xW: float) -> tuple[float, int]:
+def strip(sl: plane, vle: line, xj: float) -> tuple[float, int]:
+    xW, _ = cross(sl, lambda x, y: x-y)
     i = 0
     while xj > xW:
         i += 1
@@ -54,8 +55,8 @@ if __name__ == "__main__":
     sl = striOpline(rl=rl, ql=ql, xW=xW)
     vle = vlEqui(alpha=alpha)
 
-    xn, n = rectify(rl=rl, vle=vle, xD=xD, ql=ql)
-    xm, m = strip(sl=sl, vle=vle, xj=xn, xW=xW)
+    xn, n = rectify(rl=rl, vle=vle, ql=ql)
+    xm, m = strip(sl=sl, vle=vle, xj=xn)
     print(f"Nt = {n+m}\t\t(Total Number of Theoretical Plates)")
     print(f"Nf = {n+1}\t\t(Feed Plate Location)")
     print(f"Nr = {n}\t\t(Number of Plates in Rectifying Section)")
