@@ -48,3 +48,4 @@ Requires Python >= 3.14
 
 ## Workflow
 - Do NOT commit changes to git after tasks - wait for explicit user request
+- Always work within the current workspace (`/home/PomeloFish/Code/Pylatum/hybrid`) and current git branch. Do not switch to other workspaces or branches unless explicitly instructed.
