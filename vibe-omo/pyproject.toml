@@ -5,11 +5,23 @@ description = "A solution with pure vibe coding"
 requires-python = ">=3.14"
 dependencies = [
     "numpy>=2.0",
-    "matplotlib>=3.8",
+    "pygobject>=3.56.2",
 ]
 
 [project.scripts]
 distillation = "vibe_omo.distillation.gui:main"
 
+[tool.uv]
+package = true
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]

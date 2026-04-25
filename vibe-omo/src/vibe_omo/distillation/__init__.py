@@ -1,3 +1,4 @@
-from .core import McCabeThiele
+from .core import McCabeThiele, McCabeThieleResult
+from .plotter import CairoPlotter
 
-__all__ = ["McCabeThiele"]
+__all__ = ["McCabeThiele", "McCabeThieleResult", "CairoPlotter"]
