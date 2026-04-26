@@ -1,8 +1,20 @@
+import math
 import webview
 import calc
 import numpy as np
 import sys
 import os
+
+
+def _sanitize(obj):
+    """Replace non-JSON-safe floats (inf, -inf, nan) with None recursively."""
+    if isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    if isinstance(obj, float) and (math.isinf(obj) or math.isnan(obj)):
+        return None
+    return obj
 
 
 def get_resource_path(filename: str) -> str:
@@ -14,15 +26,15 @@ def get_resource_path(filename: str) -> str:
 
 
 class Api:
-    def calculate(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> dict:
-        Rm, n, m = calc.calculate(R, q, alpha, xD, xF, xW)
-        return {
+    def calculate(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float, inf: float) -> dict:
+        Rm, n, m = calc.calculate(R, q, alpha, xD, xF, xW, inf)
+        return _sanitize({
             "Rm": Rm,
             "Nt": n + m,
             "Nf": n + 1,
             "Nr": n,
             "Ns": m
-        }
+        })
 
     def plotly_chart(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> dict:
         rl = calc.rectiOpline(R=R, xD=xD)
@@ -75,7 +87,7 @@ class Api:
             legend=dict(x=1.02, y=1)
         )
 
-        return {"data": traces, "layout": layout}
+        return _sanitize({"data": traces, "layout": layout})
 
 def main():
     api = Api()

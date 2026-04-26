@@ -46,6 +46,10 @@
       <label>Bottoms (xW)</label>
       <input type="number" id="xW" step="0.01" min="0" max="1" value="0.02">
     </div>
+    <div class="input-group">
+      <label>Interation Limit</label>
+      <input type="number" id="inf" step="65536" min="1" value="65536">
+    </div>
   </div>
   <div class="controls">
     <button id="calculate">Calculate</button>
@@ -64,15 +68,18 @@
       const xD = parseFloat(document.getElementById('xD').value);
       const xF = parseFloat(document.getElementById('xF').value);
       const xW = parseFloat(document.getElementById('xW').value);
-      
+      const inf = parseFloat(document.getElementById('inf').value);
+      function fmt(v, decimals) {
+        return v === null ? '\u221E' : (decimals != null ? v.toFixed(decimals) : v);
+      }
       try {
-        const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW);
+        const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW, inf);
         document.getElementById('result').innerHTML = `
-          <div class="result-item"><label>Minium Reflux (Rm)</label><span>${result.Rm.toFixed(3)}</span></div>
-          <div class="result-item"><label>Total Plates (Nt)</label><span>${result.Nt}</span></div>
-          <div class="result-item"><label>Feed Plate (Nf)</label><span>${result.Nf}</span></div>
-          <div class="result-item"><label>Rectifying (Nr)</label><span>${result.Nr}</span></div>
-          <div class="result-item"><label>Stripping (Ns)</label><span>${result.Ns}</span></div>
+          <div class="result-item"><label>Minium Reflux (Rm)</label><span>${fmt(result.Rm, 3)}</span></div>
+          <div class="result-item"><label>Total Plates (Nt)</label><span>${fmt(result.Nt)}</span></div>
+          <div class="result-item"><label>Feed Plate (Nf)</label><span>${fmt(result.Nf)}</span></div>
+          <div class="result-item"><label>Rectifying (Nr)</label><span>${fmt(result.Nr)}</span></div>
+          <div class="result-item"><label>Stripping (Ns)</label><span>${fmt(result.Ns)}</span></div>
         `;
         const chartData = await window.pywebview.api.plotly_chart(R, q, alpha, xD, xF, xW);
         const layout = { ...chartData.layout, width: undefined, height: undefined };

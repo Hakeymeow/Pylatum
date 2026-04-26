@@ -1,4 +1,4 @@
-import math
+import math, sys
 from tqdm import tqdm
 from typing import Callable
 plane = Callable[[float, float], float]
@@ -35,7 +35,7 @@ def minR(alpha: float, xD: float, q: float, xF: float) -> float:
         y = alpha * x / (1+(alpha-1)*x)
     return (xD-y) / (y-x)
 
-def rectify(rl: plane, vle: line, ql: plane) -> tuple[float, int]:
+def rectify(rl: plane, vle: line, ql: plane, inf: int) -> tuple[float, int|float]:
     xe, _ = cross(rl, ql)
     xj, i = vle(rl(0, 0)), 0
     with tqdm(desc="Rectifying: ") as pbar:
@@ -44,6 +44,8 @@ def rectify(rl: plane, vle: line, ql: plane) -> tuple[float, int]:
             _, yj = cross(rl, lambda x, y: x-xj)
             xj = vle(yj)
             pbar.update(1)
+            if i > inf:
+                return (0, float('inf'))
     return (xj, i)
 
 def strip(sl: plane, vle: line, xj: float) -> tuple[float, int]:
@@ -57,7 +59,7 @@ def strip(sl: plane, vle: line, xj: float) -> tuple[float, int]:
             pbar.update(1)
     return (xj, i)
 
-def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> tuple[float, float, float]:
+def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float, inf: int) -> tuple[float, float, float]:
     Rm = minR(alpha, xD, q, xF)
     if R < minR(alpha, xD, q, xF):
         return (Rm, float('inf'), float('inf'))
@@ -65,7 +67,7 @@ def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float)
     ql = qline(q=q, xF=xF)
     sl = striOpline(rl=rl, ql=ql, xW=xW)
     vle = vlEqui(alpha=alpha)
-    xn, n = rectify(rl=rl, vle=vle, ql=ql)
+    xn, n = rectify(rl=rl, vle=vle, ql=ql, inf=inf)
     xm, m = strip(sl=sl, vle=vle, xj=xn)
     return (Rm, n, m)
 
@@ -73,6 +75,7 @@ def main():
 
     from argparse import ArgumentParser
     parser = ArgumentParser()
+    parser.add_argument("--inf", '-i', type=int, help="iteration limit", default=sys.maxsize)
     parser.add_argument("--R", type=float, help="reflux ration", default=2.0)
     parser.add_argument("--q", type=float, help="thermal condition of the feed", default=1.0)
     parser.add_argument("--alpha", type=float, help="relative volatility", default=2.5)
@@ -81,12 +84,12 @@ def main():
     parser.add_argument("--xW", type=float, help="composition of the bottom residue", default=0.02)
     args = parser.parse_args()
 
-    Rm, n, m = calculate(args.R, args.q, args.alpha, args.xD, args.xF, args.xW)
+    Rm, n, m = calculate(args.R, args.q, args.alpha, args.xD, args.xF, args.xW, args.inf)
 
     print("=" * 48)
     print("Arguments\n---")
-    print(f"{f"R={args.R}":<16}{f"q={args.q}":<16}{f"ɑ={args.alpha}":<16}")
-    print(f"{f"xD={args.xD}":<16}{f"xF={args.xF}":<16}{f"xW={args.xW}":<16}")
+    print(f"{f"R={args.R}":<14}   {f"q={args.q}":<14}   {f"ɑ={args.alpha}":<14}")
+    print(f"{f"xD={args.xD}":<14}   {f"xF={args.xF}":<14}   {f"xW={args.xW}":<14}")
     print("=" * 48)
     print("Calculation Results\n---")
     print(f"{"Rm (Minimum Reflux Ration)":<30} : {Rm:.12f}")
