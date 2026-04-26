@@ -8,3 +8,5 @@
 [GUI-pywebview[gtk]](https://opncd.ai/share/AH5v4Pjk)
 
 [build-nuitka](https://opncd.ai/share/wiQoPYCb)
+
+[plot](https://opncd.ai/share/xwYH1QHK)

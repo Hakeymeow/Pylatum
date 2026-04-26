@@ -8,6 +8,7 @@ dependencies = [
     "pywebview[gtk]>=6.2.1",
     "plotly>=5.0.0",
     "nuitka[onefile]>=4.0.8",
+    "matplotlib>=3.10.9",
 ]
 
 [project.scripts]
