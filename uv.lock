@@ -254,20 +254,30 @@ name = "hybrid"
 version = "0.1.0"
 source = { editable = "hybrid" }
 dependencies = [
-    { name = "manim" },
-    { name = "matplotlib" },
-    { name = "nuitka", extra = ["onefile"] },
     { name = "plotly" },
     { name = "pywebview", extra = ["gtk"] },
 ]
 
+[package.dev-dependencies]
+build = [
+    { name = "nuitka", extra = ["onefile"] },
+]
+dev = [
+    { name = "manim" },
+    { name = "matplotlib" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "manim", specifier = ">=0.20.1" },
-    { name = "matplotlib", specifier = ">=3.10.9" },
-    { name = "nuitka", extras = ["onefile"], specifier = ">=4.0.8" },
     { name = "plotly", specifier = ">=5.0.0" },
     { name = "pywebview", extras = ["gtk"], specifier = ">=6.2.1" },
+]
+
+[package.metadata.requires-dev]
+build = [{ name = "nuitka", extras = ["onefile"], specifier = ">=4.0.8" }]
+dev = [
+    { name = "manim", specifier = ">=0.20.1" },
+    { name = "matplotlib", specifier = ">=3.10.9" },
 ]
 
 [[package]]

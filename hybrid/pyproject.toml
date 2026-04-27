@@ -4,11 +4,8 @@ version = "0.1.0"
 description = "A hybrid solution of artificial coding and vibe coding"
 requires-python = ">=3.14"
 dependencies = [
-    "manim>=0.20.1",
     "pywebview[gtk]>=6.2.1",
     "plotly>=5.0.0",
-    "nuitka[onefile]>=4.0.8",
-    "matplotlib>=3.10.9",
 ]
 
 [project.scripts]
@@ -16,6 +13,15 @@ hy-cli = "calc:main"
 hy-gui = "calc_gui:main"
 hy-build = "build:main"
 hy-render = "demo:main"
+
+[dependency-groups]
+dev = [
+    "manim>=0.20.1",
+    "matplotlib>=3.10.9",
+]
+build = [
+    "nuitka[onefile]>=4.0.8",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
