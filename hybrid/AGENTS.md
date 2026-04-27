@@ -2,9 +2,10 @@
 
 ## Run Commands
 ```bash
-uv run hy-cli                  # CLI calculator 
-uv run hy-gui                   # GUI (pywebview + Plotly)
-uv run hy-render                # Manim animation demo
+uv run python       # Python in virtual environment
+uv run hy-cli       # CLI calculator 
+uv run hy-gui       # GUI (pywebview + Plotly)
+uv run hy-render    # Manim animation demo
 ```
 
 ## Package Structure
@@ -45,4 +46,9 @@ Requires Python >= 3.14
 
 ## Workflow
 - Do NOT commit changes to git after tasks - wait for explicit user request
+- Write conventional commits structured as follows with scpoe to which "hyv-" is prefixed. If body is wanted, its key points must be splited by '- '.
+```
+<type>[scope]: <description>
+[body]
+``` 
 - Always work within the current workspace (`/home/PomeloFish/Code/Pylatum/hybrid`) and current git branch. Do not switch to other workspaces or branches unless explicitly instructed.
