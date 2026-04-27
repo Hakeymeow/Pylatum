@@ -1,5 +1,4 @@
 import math, sys
-from tqdm import tqdm
 from typing import Callable
 plane = Callable[[float, float], float]
 line = Callable[[float], float]
@@ -35,31 +34,31 @@ def minR(alpha: float, xD: float, q: float, xF: float) -> float:
         y = alpha * x / (1+(alpha-1)*x)
     return (xD-y) / (y-x)
 
-def rectify(rl: plane, vle: line, ql: plane, inf: int) -> tuple[float, int|float]:
+def rectify(rl: plane, vle: line, ql: plane, inf: int, noisy: bool = False) -> tuple[float, int|float]:
     xe, _ = cross(rl, ql)
     xj, i = vle(rl(0, 0)), 0
-    with tqdm(desc="Rectifying: ") as pbar:
-        while xj > xe:
-            i += 1
-            _, yj = cross(rl, lambda x, y: x-xj)
-            xj = vle(yj)
-            pbar.update(1)
-            if i > inf:
-                return (0, float('inf'))
+    while xj > xe:
+        i += 1
+        _, yj = cross(rl, lambda x, y: x-xj)
+        xj = vle(yj)
+        if noisy:
+            print(f"{f"\rRectifying: {i}":<48}", end='')
+        if i > inf:
+            return (0, float('inf'))
     return (xj, i)
 
-def strip(sl: plane, vle: line, xj: float) -> tuple[float, int]:
+def strip(sl: plane, vle: line, xj: float, noisy: bool = False) -> tuple[float, int]:
     xW, _ = cross(sl, lambda x, y: x-y)
     i = 0
-    with tqdm(desc="Stripping: ") as pbar:
-        while xj > xW:
-            i += 1
-            _, yj = cross(sl, lambda x, y: x-xj)
-            xj = vle(yj)
-            pbar.update(1)
+    while xj > xW:
+        i += 1
+        _, yj = cross(sl, lambda x, y: x-xj)
+        xj = vle(yj)
+        if noisy:
+            print(f"{f"\rStripping: {i}":<48}", end='')
     return (xj, i)
 
-def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float, inf: int) -> tuple[float, float, float]:
+def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float, inf: int, noisy: bool = False) -> tuple[float, float, float]:
     Rm = minR(alpha, xD, q, xF)
     if R < minR(alpha, xD, q, xF):
         return (Rm, float('inf'), float('inf'))
@@ -67,8 +66,8 @@ def calculate(R: float, q: float, alpha: float, xD: float, xF: float, xW: float,
     ql = qline(q=q, xF=xF)
     sl = striOpline(rl=rl, ql=ql, xW=xW)
     vle = vlEqui(alpha=alpha)
-    xn, n = rectify(rl=rl, vle=vle, ql=ql, inf=inf)
-    xm, m = strip(sl=sl, vle=vle, xj=xn)
+    xn, n = rectify(rl=rl, vle=vle, ql=ql, inf=inf, noisy=noisy)
+    xm, m = strip(sl=sl, vle=vle, xj=xn, noisy=noisy)
     return (Rm, n, m)
 
 def main():
@@ -86,7 +85,7 @@ def main():
 
     Rm, n, m = calculate(args.R, args.q, args.alpha, args.xD, args.xF, args.xW, args.inf)
 
-    print("=" * 48)
+    print('\n' + "=" * 48)
     print("Arguments\n---")
     print(f"{f"R={args.R}":<14}   {f"q={args.q}":<14}   {f"ɑ={args.alpha}":<14}")
     print(f"{f"xD={args.xD}":<14}   {f"xF={args.xF}":<14}   {f"xW={args.xW}":<14}")
@@ -97,7 +96,7 @@ def main():
     print(f"{"Nf (Feed Location)":<30} : {n+1}")
     print(f"{"Nr (Rectifying)":<30} : {n}")
     print(f"{"Ns (Stripping and Reboiler)":<30} : {m}")
-    print("=" * 48)
+    print("=" * 48 + '\n')
 
 if __name__ == "__main__":
     main()

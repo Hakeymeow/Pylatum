@@ -13,24 +13,6 @@ import matplotlib.pyplot as plt
 from calc import calculate, minR
 
 
-def suppress_tqdm():
-    """Patch tqdm to silence progress bars during sweeps."""
-    import tqdm
-    original = tqdm.tqdm.__init__
-
-    def silent_init(self, *args, **kwargs):
-        kwargs["disable"] = True
-        original(self, *args, **kwargs)
-
-    tqdm.tqdm.__init__ = silent_init
-    return original
-
-
-def restore_tqdm(original):
-    """Restore original tqdm.__init__."""
-    import tqdm
-    tqdm.tqdm.__init__ = original
-
 
 def plot_R_vs_stages(
     q=1.0,
@@ -55,7 +37,6 @@ def plot_R_vs_stages(
     R_start = Rm * R_min_factor
     R_end = Rm * R_max_factor
 
-    orig_tqdm = suppress_tqdm()
 
     Nt_list, Nr_list, Ns_list, R_list = [], [], [], []
     for i in range(num_points):
@@ -67,8 +48,6 @@ def plot_R_vs_stages(
         Nr_list.append(n)
         Ns_list.append(m)
         Nt_list.append(n + m)
-
-    restore_tqdm(orig_tqdm)
 
     if not R_list:
         print("Error: no valid data points (all returned inf). Try increasing inf or R_min_factor.")
