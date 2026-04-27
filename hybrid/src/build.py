@@ -13,7 +13,7 @@ def buildGUI():
         f"--include-module={m}" for m in ("webview", "numpy")
     ] + [
         f"--include-data-files={os.path.join(SRC_DIR, f)}=."
-        for f in ("index.html", "plotly.min.js")
+        for f in ["index.html"]
     ] + [
         "--output-filename=pylatum-gui",
         os.path.join(SRC_DIR, "calc_gui.py")

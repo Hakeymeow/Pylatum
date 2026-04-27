@@ -1,4 +1,4 @@
-## Sessions
+## Sessions Record
 [agent-init 1](https://opncd.ai/share/MjX5DeGJ)
 [agent-init 2](https://opncd.ai/share/q2A70T6N)
 [agent-init 3](https://opncd.ai/share/vmATTxNu)
@@ -9,4 +9,6 @@
 
 [build-nuitka](https://opncd.ai/share/wiQoPYCb)
 
-[plot](https://opncd.ai/share/xwYH1QHK)
+[matplotlib](https://opncd.ai/share/xwYH1QHK)
+
+[plotly](https://opncd.ai/share/yZcapNtP)

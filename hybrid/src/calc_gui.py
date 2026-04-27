@@ -25,6 +25,19 @@ def get_resource_path(filename: str) -> str:
     return os.path.join(os.path.dirname(__file__), filename)
 
 
+def build_html() -> str:
+    from plotly.offline import get_plotlyjs
+
+    html_path = get_resource_path("index.html")
+    with open(html_path) as f:
+        html = f.read()
+
+    return html.replace(
+        "<!-- PLOTLY_JS -->",
+        f"<script>{get_plotlyjs()}</script>",
+    )
+
+
 class Api:
     def calculate(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float, inf: float) -> dict:
         Rm, n, m = calc.calculate(R, q, alpha, xD, xF, xW, inf)
@@ -93,7 +106,7 @@ def main():
     api = Api()
     webview.create_window(
         "McCabe-Thiele Calculator",
-        url=get_resource_path("index.html"),
+        html=build_html(),
         js_api=api
     )
     webview.start()
