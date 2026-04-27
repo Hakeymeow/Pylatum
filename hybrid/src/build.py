@@ -10,7 +10,7 @@ BASIC_CMD = [
 
 def buildGUI():
     guicmd = BASIC_CMD + [
-        f"--include-module={m}" for m in ("webview", "numpy")
+        f"--include-module={m}" for m in ["webview"]
     ] + [
         f"--include-data-files={os.path.join(SRC_DIR, f)}=."
         for f in ["index.html"]

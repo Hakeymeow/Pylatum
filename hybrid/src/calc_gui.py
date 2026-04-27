@@ -1,9 +1,6 @@
-import math
+import math, sys, os
 import webview
 import calc
-import numpy as np
-import sys
-import os
 
 
 def _sanitize(obj):
@@ -54,14 +51,15 @@ class Api:
         ql = calc.qline(q=q, xF=xF)
         sl = calc.striOpline(rl=rl, ql=ql, xW=xW)
         vle = calc.vlEqui(alpha=alpha)
-
-        x_vals = list(np.linspace(0, 1, 100))
+        def linspace(start, end, split):
+            return [(end-start)*x/(split-1) for x in range(0, split)]
+        x_vals = linspace(0, 1, 100)
 
         traces = [
             dict(x=x_vals, y=x_vals, mode='lines', name='y=x', line=dict(color='#888888', width=1)),
             dict(x=x_vals, y=[alpha*x/(1+(alpha-1)*x) for x in x_vals], mode='lines', name='Equilibrium', line=dict(color='#e74c3c', width=2)),
             dict(x=x_vals, y=[R/(R+1)*x + xD/(R+1) for x in x_vals], mode='lines', name='Rectifying', line=dict(color='#3498db', width=2)),
-            dict(x=x_vals if q != 1 else [xF]*100, y=np.linspace(0,1,100).tolist() if q == 1 else [q/(q-1)*x - xF/(q-1) for x in x_vals], mode='lines', name='q-line', line=dict(color='#f1c40f', width=2)),
+            dict(x=x_vals if q != 1 else [xF]*100, y=linspace(0,1,100) if q == 1 else [q/(q-1)*x - xF/(q-1) for x in x_vals], mode='lines', name='q-line', line=dict(color='#f1c40f', width=2)),
         ]
 
         xi, yi = calc.cross(rl, ql)
