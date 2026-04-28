@@ -8,12 +8,6 @@ dependencies = [
     "plotly>=5.0.0",
 ]
 
-[project.scripts]
-hy-cli = "calc:main"
-hy-gui = "calc_gui:main"
-hy-build = "build:main"
-hy-render = "demo:main"
-
 [dependency-groups]
 dev = [
     "manim>=0.20.1",

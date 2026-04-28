@@ -6,6 +6,12 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
 
+[project.scripts]
+hy-cli = "hybrid.calc:main"
+hy-gui = "hybrid.calc_gui:main"
+hy-build = "hybrid.build:main"
+hy-render = "hybrid.demo:main"
+
 [[tool.uv.index]]
 url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
 default = true
