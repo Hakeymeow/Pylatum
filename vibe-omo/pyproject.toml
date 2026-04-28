@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-distillation = "vibe_omo.distillation.gui:main"
+vo-gui = "vibe_omo.distillation.gui:main"
 
 [tool.uv]
 package = true

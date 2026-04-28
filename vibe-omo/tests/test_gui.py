@@ -55,7 +55,8 @@ class TestGUI:
             "_on_activate", "_build_window", "_build_menu", "_build_ui",
             "_build_left_panel", "_on_draw", "_connect_signals",
             "_on_key_press", "_get_params", "_calculate", "_load_preset",
-            "_export_plot", "_show_help", "_show_error", "_show_info", "run",
+            "_toggle_chart", "_export_plot", "_show_help", "_show_error",
+            "_show_info", "run",
         ]:
             assert hasattr(app, name), f"Missing method: {name}"
 
@@ -126,6 +127,28 @@ class TestGUIWindow:
         from vibe_omo.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
+        app.window.destroy()
+
+    def test_toggle_chart_hides_right_box(self):
+        from vibe_omo.distillation.gui import DistillationGUI
+        app = DistillationGUI()
+        app._on_activate(app.app)
+
+        assert app._chart_visible is True
+        assert app._right_box.get_visible() is True
+
+        app._chart_toggle.set_active(False)
+
+        assert app._chart_visible is False
+        assert app._right_box.get_visible() is False
+        assert "计算器模式" in app.window.get_title()
+
+        app._chart_toggle.set_active(True)
+
+        assert app._chart_visible is True
+        assert app._right_box.get_visible() is True
+        assert "计算器模式" not in app.window.get_title()
+
         app.window.destroy()
 
 

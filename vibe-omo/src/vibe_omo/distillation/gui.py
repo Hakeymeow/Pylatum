@@ -35,6 +35,8 @@ class DistillationGUI:
         self.app.connect("activate", self._on_activate)
         self._result: McCabeThieleResult | None = None
         self._plotter = CairoPlotter(None)
+        self._chart_visible = True
+        self._default_size = (1200, 780)
 
     def _on_activate(self, app):
         self._build_window(app)
@@ -77,6 +79,15 @@ class DistillationGUI:
         quit_item.connect("activate", lambda _: self.window.close())
         file_menu.append(quit_item)
 
+        view_menu = Gtk.Menu()
+        view_item = Gtk.MenuItem(label="视图")
+        view_item.set_submenu(view_menu)
+
+        self._chart_toggle = Gtk.CheckMenuItem(label="显示图表")
+        self._chart_toggle.set_active(True)
+        self._chart_toggle.connect("toggled", lambda _: self._toggle_chart())
+        view_menu.append(self._chart_toggle)
+
         help_menu = Gtk.Menu()
         help_item = Gtk.MenuItem(label="帮助")
         help_item.set_submenu(help_menu)
@@ -85,6 +96,7 @@ class DistillationGUI:
         help_menu.append(usage_item)
 
         mb.append(file_item)
+        mb.append(view_item)
         mb.append(help_item)
 
         ag = Gtk.AccelGroup()
@@ -106,14 +118,14 @@ class DistillationGUI:
         left.set_size_request(340, -1)
         hbox.pack_start(left, False, False, 0)
 
-        right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        hbox.pack_start(right, True, True, 0)
+        self._right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        hbox.pack_start(self._right_box, True, True, 0)
 
         self._drawing_area = Gtk.DrawingArea()
         self._drawing_area.connect("draw", self._on_draw)
         self._drawing_area.set_hexpand(True)
         self._drawing_area.set_vexpand(True)
-        right.pack_start(self._drawing_area, True, True, 0)
+        self._right_box.pack_start(self._drawing_area, True, True, 0)
 
         self.window.add(vbox)
         self._build_left_panel(left)
@@ -211,6 +223,19 @@ class DistillationGUI:
 
     def _connect_signals(self):
         self.window.connect("key-press-event", self._on_key_press)
+
+    def _toggle_chart(self):
+        self._chart_visible = self._chart_toggle.get_active()
+        if self._chart_visible:
+            self._right_box.show()
+            self.window.set_title("精馏塔理论塔板数计算 — McCabe-Thiele 图解法")
+            w, h = self._default_size
+            self.window.resize(w, h)
+        else:
+            self._right_box.hide()
+            self.window.set_title("精馏塔理论塔板数计算 (计算器模式)")
+            self.window.resize(400, 600)
+            self.window.set_position(Gtk.WindowPosition.CENTER)
 
     def _on_key_press(self, widget, event):
         if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
