@@ -26,12 +26,9 @@ def vlEqui(alpha: float) -> line:
     return lambda y: y / (alpha - (alpha-1) * y)
 
 def minR(alpha: float, xD: float, q: float, xF: float) -> float:
-    if q == 1:
-        x, y = xF, alpha * xF / (1+(alpha-1)*xF)
-    else:
-        a, b, c = (alpha-1) * q, alpha * (1-q-xF), -xF
-        x = (math.sqrt(b*b-4*a*c) - b) / 2*a
-        y = alpha * x / (1+(alpha-1)*x)
+    a, b, c = (alpha-1) * q, q + xF * (1-alpha) + alpha * (1-q), -xF
+    x = (math.sqrt(b*b-4*a*c) - b) / (2*a)
+    y = alpha * x / (1+(alpha-1)*x)
     return (xD-y) / (y-x)
 
 def rectify(rl: plane, vle: line, ql: plane, inf: int, noisy: bool = False) -> tuple[float, int|float]:
