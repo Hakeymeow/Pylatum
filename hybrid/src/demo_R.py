@@ -14,11 +14,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 from calc import vlEqui, rectiOpline, qline, striOpline, cross, minR
 
 from manim import *
-
+import numpy as np
 
 class RStagesAnimation(Scene):
     def construct(self):
-        q, alpha = 1.0, 2.5
+        q, alpha = 1.1, 2.5
         xD, xF, xW = 0.97, 0.45, 0.02
 
         Rm = minR(alpha, xD, q, xF)
@@ -33,16 +33,21 @@ class RStagesAnimation(Scene):
 
         vle_plot = axes.plot(vlex(alpha), color=RED_A)
 
-        # q-line (q=1 → vertical line x = xF)
-        ql_plot = DashedLine(axes.c2p(xF, 0), axes.c2p(xF, 1), color=YELLOW_A)
-        ql_label = MathTex("x = x_F", color=YELLOW_A).next_to(axes.c2p(xF, 1), UP)
+        # draw q-line
+        ql = qline(q, xF)
+        qlk = np.divide(ql(1, 0) - ql(0, 0), -ql(0, 1) + ql(0, 0))
+        ql_plot = DashedLine(
+            axes.c2p(0, xF), axes.c2p(2 * xF, xF), color=YELLOW_A
+        ).rotate(
+            angle=np.arctan(qlk), about_point=axes.c2p(xF, xF)
+        )
 
         # VLE inverse  y → x
         vley = vlEqui(alpha)
 
         # Label for distillate / bottoms
         xD_label = MathTex("x_D", color=BLUE_A).next_to(axes.c2p(xD, xD), DOWN * 2)
-        xW_label = MathTex("x_W", color=GREEN_A).next_to(axes.c2p(xW, xW), DOWN * 2)
+        xW_label = MathTex("x_W", color=GREEN_A).next_to(axes.c2p(xW, xW), RIGHT * 3)
 
         R_tracker = ValueTracker(R_start)
 
@@ -65,7 +70,7 @@ class RStagesAnimation(Scene):
         def _dot():
             R = R_tracker.get_value()
             pt = cross(rectiOpline(R, xD), qline(q, xF))
-            return Dot(axes.c2p(*pt), color=GREEN_A)
+            return Dot(axes.c2p(pt), color=GREEN_A)
 
         def _stages():
             R = R_tracker.get_value()
@@ -82,7 +87,7 @@ class RStagesAnimation(Scene):
             while xi > xe + 1e-10 and count < MAX_N:
                 count += 1
                 xj, yj = cross(rl, lambda xp, yp: xp - xi)
-                lines.add(Line(axes.c2p(xi, yi), axes.c2p(xj, yj), color=PURPLE_A))
+                lines.add(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=PURPLE_A))
                 xi, yi = vley(yj), yj
                 lines.add(Line(axes.c2p(xj, yj), axes.c2p(xi, yi), color=PURPLE_A))
 
@@ -91,7 +96,7 @@ class RStagesAnimation(Scene):
                 xj, yj = cross(sl, lambda xp, yp: xp - xi)
                 lines.add(DashedLine(axes.c2p(xi, yi), axes.c2p(xj, yj), color=ORANGE))
                 xi, yi = vley(yj), yj
-                lines.add(DashedLine(axes.c2p(xj, yj), axes.c2p(xi, yi), color=ORANGE))
+                lines.add(Line(axes.c2p(xj, yj), axes.c2p(xi, yi), color=ORANGE))
 
             return lines
 
@@ -120,12 +125,7 @@ class RStagesAnimation(Scene):
                 return Text("Stages: ∞", color=RED).next_to(axes, DOWN)
             return Text(f"Stages: {count}", color=WHITE).next_to(axes, DOWN)
 
-        self.play(Create(axes), Create(diagonal))
-        self.play(Create(vle_plot))
-        self.play(Create(ql_plot), Write(ql_label))
-        self.play(Write(xD_label), Write(xW_label))
-        self.wait(0.5)
-
+        self.add(axes, diagonal, vle_plot, ql_plot, xD_label, xW_label)
         self.add(R_text)
 
         rl_mob = always_redraw(_rl)
@@ -135,14 +135,12 @@ class RStagesAnimation(Scene):
         count_mob = always_redraw(_count)
 
         self.add(rl_mob, sl_mob, dot_mob, stages_mob, count_mob)
-        self.wait(1)
 
         self.play(
             R_tracker.animate.set_value(R_end),
-            run_time=18,
+            run_time=10,
             rate_func=linear,
         )
-        self.wait(3)
 
 
 def main():
@@ -151,7 +149,7 @@ def main():
 
     demoPath = os.path.dirname(os.path.dirname(__file__)) + os.sep + "demo"
     os.makedirs(demoPath, exist_ok=True)
-    cmd = ["manim", "-pqh", __file__, RStagesAnimation.__name__]
+    cmd = ["manim", "-pql", __file__, RStagesAnimation.__name__]
     subprocess.run(cmd, cwd=demoPath, check=True)
 
 
