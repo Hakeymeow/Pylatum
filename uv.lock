@@ -252,7 +252,7 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/3a/80/82
 [[package]]
 name = "hybrid"
 version = "0.1.0"
-source = { editable = "hybrid" }
+source = { virtual = "hybrid" }
 dependencies = [
     { name = "plotly" },
     { name = "pywebview", extra = ["gtk"] },
