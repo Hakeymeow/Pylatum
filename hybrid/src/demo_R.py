@@ -18,59 +18,52 @@ import numpy as np
 
 class RStagesAnimation(Scene):
     def construct(self):
-        q, alpha = 1.1, 2.5
+        q, alpha = 1.0, 2.5
         xD, xF, xW = 0.97, 0.45, 0.02
 
         Rm = minR(alpha, xD, q, xF)
-        R_start = Rm * 1.05
-        R_end   = Rm * 5.0
+        R_start = Rm * 1.01
+        R_end   = Rm * 5.00
 
-        axes = Axes(x_range=[0, 1, 0.1], y_range=[0, 1, 0.1])
+        axes = Axes(x_range=[-0.1, 1, 0.1], y_range=[-0.1, 1, 0.1])
         diagonal = DashedLine(axes.c2p(0, 0), axes.c2p(1, 1))
 
         def vlex(a):
             return lambda xv: a * xv / (1 + (a - 1) * xv)
-
-        vle_plot = axes.plot(vlex(alpha), color=RED_A)
+        vle_plot = axes.plot(vlex(alpha), color=RED_A, x_range=[0, 1])
 
         # draw q-line
-        ql = qline(q, xF)
-        qlk = np.divide(ql(1, 0) - ql(0, 0), -ql(0, 1) + ql(0, 0))
-        ql_plot = DashedLine(
-            axes.c2p(0, xF), axes.c2p(2 * xF, xF), color=YELLOW_A
-        ).rotate(
-            angle=np.arctan(qlk), about_point=axes.c2p(xF, xF)
-        )
+        if q != 1:
+            ql_plot = axes.plot(lambda x: q*x/(q-1)-xF/(q-1))
+        else:
+            ql_plot = Line(axes.c2p(xF, -1), axes.c2p(xF, 2))
+        ql_plot.set_color(color=YELLOW_A)
 
         # VLE inverse  y → x
         vley = vlEqui(alpha)
 
         # Label for distillate / bottoms
         xD_label = MathTex("x_D", color=BLUE_A).next_to(axes.c2p(xD, xD), DOWN * 2)
-        xW_label = MathTex("x_W", color=GREEN_A).next_to(axes.c2p(xW, xW), RIGHT * 3)
+        xW_label = MathTex("x_W", color=GREEN_A).next_to(axes.c2p(xW, 0), DOWN+RIGHT)
 
         R_tracker = ValueTracker(R_start)
 
         R_text = always_redraw(
             lambda: MathTex(
-                f"R = {R_tracker.get_value():.2f}", color=BLUE_A
+                f"R = {R_tracker.get_value()/Rm:.2f}\\,R_m", color=BLUE_A
             ).to_corner(UL)
         )
 
         def _rl():
             R = R_tracker.get_value()
-            y_int = xD / (R + 1)
-            return Line(axes.c2p(0, y_int), axes.c2p(xD, xD), color=BLUE_A)
-
-        def _sl():
-            R = R_tracker.get_value()
-            pt = cross(rectiOpline(R, xD), qline(q, xF))
-            return Line(axes.c2p(*pt), axes.c2p(xW, xW), color=GREEN_A)
+            return Line(axes.c2p(0, xD/(R+1)), axes.c2p(xD, xD), color=BLUE_A)
 
         def _dot():
             R = R_tracker.get_value()
             pt = cross(rectiOpline(R, xD), qline(q, xF))
             return Dot(axes.c2p(pt), color=GREEN_A)
+        def _sl():
+            return Line(_dot(), axes.c2p(xW, xW), color=GREEN_A)
 
         def _stages():
             R = R_tracker.get_value()
@@ -108,25 +101,25 @@ class RStagesAnimation(Scene):
 
             xe, _ = cross(rl, ql)
             xi, yi = vley(xD), xD
-            count = 0
+            Nr, Ns = 0, 0
             MAX_N = 200
 
-            while xi > xe + 1e-10 and count < MAX_N:
-                count += 1
+            while xi > xe + 1e-10 and Nr+Ns < MAX_N:
+                Nr += 1
                 xj, yj = cross(rl, lambda xp, yp: xp - xi)
                 xi, yi = vley(yj), yj
 
-            while xi > xW + 1e-10 and count < MAX_N:
-                count += 1
+            while xi > xW + 1e-10 and Nr+Ns < MAX_N:
+                Ns += 1
                 xj, yj = cross(sl, lambda xp, yp: xp - xi)
                 xi, yi = vley(yj), yj
 
-            if count >= MAX_N:
-                return Text("Stages: ∞", color=RED).next_to(axes, DOWN)
-            return Text(f"Stages: {count}", color=WHITE).next_to(axes, DOWN)
+            if Nr+Ns >= MAX_N:
+                return MathTex("N_r=\\infty\\ \\ N_s=\\infty", color=RED).next_to(axes.c2p(0.9, 0), UP)
+            return MathTex(f"N_r={Nr}\\ \\ N_s={Ns}", color=WHITE).next_to(axes.c2p(0.9, 0), UP)
 
         self.add(axes, diagonal, vle_plot, ql_plot, xD_label, xW_label)
-        self.add(R_text)
+        self.add(R_text, Dot(axes.c2p(xD, xD), color=BLUE_A), Dot(xW, xW, color=GREEN_A))
 
         rl_mob = always_redraw(_rl)
         sl_mob = always_redraw(_sl)
@@ -138,7 +131,7 @@ class RStagesAnimation(Scene):
 
         self.play(
             R_tracker.animate.set_value(R_end),
-            run_time=10,
+            run_time=15,
             rate_func=linear,
         )
 
@@ -149,7 +142,7 @@ def main():
 
     demoPath = os.path.dirname(os.path.dirname(__file__)) + os.sep + "demo"
     os.makedirs(demoPath, exist_ok=True)
-    cmd = ["manim", "-pql", __file__, RStagesAnimation.__name__]
+    cmd = ["manim", "-pqh", __file__, Vary.__name__]
     subprocess.run(cmd, cwd=demoPath, check=True)
 
 
