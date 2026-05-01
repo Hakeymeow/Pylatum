@@ -8,7 +8,7 @@ import numpy as np
 class Demostration(Scene):
     def construct(self):
         # # default parameters
-        R, q, alpha = 2.0, 1.0, 2.5
+        R, q, alpha = 10, -1.0, 2.5
         xD, xF, xW = 0.97, 0.45, 0.02
         # # chemical engineering equations
         vley = vlEqui(alpha)
@@ -44,8 +44,8 @@ class Demostration(Scene):
         self.play(FadeOut(rlText), FadeOut(startText), FadeOut(endText))
         self.wait()
 
-        # draw q-line
-        qlk = np.divide(ql(1, 0)-ql(0,0), -ql(0, 1)+ql(0,0))
+        # draw q-line    
+        qlk = np.divide(q*axes.get_y_unit_size(), (q-1)*axes.get_x_unit_size())
         auxiLine = Line(axes.c2p(0, xF), axes.c2p(2*xF, xF), color=YELLOW_A)
         qlAngle = Angle(auxiLine.copy(), auxiLine.copy().rotate(angle=np.arctan(qlk), about_point=auxiLine.get_center()))
         qlCText = MathTex("(x_F, x_F)", color=YELLOW_A).next_to(auxiLine.get_center(), DOWN*0.5+RIGHT*1.5)

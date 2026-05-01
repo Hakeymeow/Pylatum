@@ -18,12 +18,12 @@ import numpy as np
 
 class RStagesAnimation(Scene):
     def construct(self):
-        q, alpha = 1.0, 2.5
+        q, alpha = -1.0, 2.5
         xD, xF, xW = 0.97, 0.45, 0.02
 
         Rm = minR(alpha, xD, q, xF)
-        R_start = Rm * 1.01
-        R_end   = Rm * 5.00
+        R_start = Rm * 5.00
+        R_end   = Rm * 1.01
 
         axes = Axes(x_range=[-0.1, 1, 0.1], y_range=[-0.1, 1, 0.1])
         diagonal = DashedLine(axes.c2p(0, 0), axes.c2p(1, 1))
@@ -33,11 +33,10 @@ class RStagesAnimation(Scene):
         vle_plot = axes.plot(vlex(alpha), color=RED_A, x_range=[0, 1])
 
         # draw q-line
-        if q != 1:
-            ql_plot = axes.plot(lambda x: q*x/(q-1)-xF/(q-1))
-        else:
-            ql_plot = Line(axes.c2p(xF, -1), axes.c2p(xF, 2))
-        ql_plot.set_color(color=YELLOW_A)
+        ql_plot = Line(axes.c2p(0, xF), axes.c2p(1, xF), color=YELLOW_A).rotate(
+            angle=np.arctan(np.divide(q*axes.get_y_unit_size(), (q-1)*axes.get_x_unit_size())),
+            about_point=axes.c2p(xF, xF)
+        )
 
         # VLE inverse  y → x
         vley = vlEqui(alpha)
@@ -119,7 +118,7 @@ class RStagesAnimation(Scene):
             return MathTex(f"N_r={Nr}\\ \\ N_s={Ns}", color=WHITE).next_to(axes.c2p(0.9, 0), UP)
 
         self.add(axes, diagonal, vle_plot, ql_plot, xD_label, xW_label)
-        self.add(R_text, Dot(axes.c2p(xD, xD), color=BLUE_A), Dot(xW, xW, color=GREEN_A))
+        self.add(R_text, Dot(axes.c2p(xD, xD), color=BLUE_A), Dot(axes.c2p(xW, xW), color=GREEN_A))
 
         rl_mob = always_redraw(_rl)
         sl_mob = always_redraw(_sl)
@@ -131,8 +130,8 @@ class RStagesAnimation(Scene):
 
         self.play(
             R_tracker.animate.set_value(R_end),
-            run_time=15,
-            rate_func=linear,
+            run_time=10,
+            rate_func=there_and_back,
         )
 
 
@@ -142,7 +141,7 @@ def main():
 
     demoPath = os.path.dirname(os.path.dirname(__file__)) + os.sep + "demo"
     os.makedirs(demoPath, exist_ok=True)
-    cmd = ["manim", "-pqh", __file__, Vary.__name__]
+    cmd = ["manim", "-pqh", __file__, RStagesAnimation.__name__]
     subprocess.run(cmd, cwd=demoPath, check=True)
 
 
