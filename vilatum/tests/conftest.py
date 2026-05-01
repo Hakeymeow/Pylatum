@@ -5,7 +5,7 @@ import numpy as np
 import cairo
 import pytest
 
-from vibe_omo.distillation.core import McCabeThiele, McCabeThieleResult
+from vilatum.distillation.core import McCabeThiele, McCabeThieleResult
 
 
 # We can't import CairoPlotter in conftest (circular dependency risk),

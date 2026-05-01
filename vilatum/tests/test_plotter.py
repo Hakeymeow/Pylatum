@@ -4,8 +4,8 @@ import cairo
 import numpy as np
 import pytest
 
-from vibe_omo.distillation.plotter import CairoPlotter
-from vibe_omo.distillation.core import McCabeThiele
+from vilatum.distillation.plotter import CairoPlotter
+from vilatum.distillation.core import McCabeThiele
 
 
 # ── helpers ─────────────────────────────────────────────────────────

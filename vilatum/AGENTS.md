@@ -81,7 +81,7 @@ vi-gui = "vilatum.distillation.gui:main"
 ### 测试注意事项
 
 - 部分 GUI 测试需要 DISPLAY 环境变量（使用 `xvfb-run` 无头运行）
-- 如果 pytest 找不到 `vibe_omo` 模块，需要先执行 `uv sync` 安装 editable 包
+- 执行 `uv sync` 安装 editable 包后再运行测试
 - `conftest.py` 提供共享 fixtures：`result_benzene_toluene`、`result_ethanol_water`、`result_q_lt_1`、`render_surface`
 - 绘图器测试使用 Cairo `ImageSurface` 进行像素级断言验证渲染结果
 
@@ -109,7 +109,7 @@ vi-gui = "vilatum.distillation.gui:main"
 
 ## 9. 已知注意事项
 
-- **`vibe_omo` → `vilatum` 重命名**：`tests/conftest.py` 中的 import 语句仍使用旧包名 `vibe_omo.distillation.core`。如需修复，应统一改为 `vilatum.distillation.core`。
+- **`vibe_omo` → `vilatum` 重命名**：已完成。测试文件中的 import 已统一改为 `vilatum.distillation.*`。
 - **工作区边界**：`hylatum/` 目录是与 `vilatum` 同级的工作区成员，Agent 不应读取或修改其中内容。
 - **异步渲染**：GUI 中的图表通过 GTK DrawingArea 和 Cairo 绘制，无 matplotlib 依赖。
 - **导出格式**：`CairoPlotter` 支持 PNG、PDF、SVG 三种导出格式。

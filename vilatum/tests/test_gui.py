@@ -13,12 +13,12 @@ from gi.repository import Gtk, Gdk, GLib
 # ── Module-level smoke tests ────────────────────────────────────────
 
 def test_gui_module_imports():
-    from vibe_omo.distillation.gui import DistillationGUI, PRESETS, main
+    from vilatum.distillation.gui import DistillationGUI, PRESETS, main
     assert callable(main)
 
 
 def test_presets_defined():
-    from vibe_omo.distillation.gui import PRESETS
+    from vilatum.distillation.gui import PRESETS
     assert len(PRESETS) == 4
     for name in ["苯-甲苯 (常压)", "乙醇-水 (常压)", "甲醇-水 (常压)", "丙酮-苯 (常压)"]:
         assert name in PRESETS
@@ -28,8 +28,8 @@ def test_presets_defined():
 
 
 def test_preset_values_valid():
-    from vibe_omo.distillation.gui import PRESETS
-    from vibe_omo.distillation.core import McCabeThiele
+    from vilatum.distillation.gui import PRESETS
+    from vilatum.distillation.core import McCabeThiele
     for name, params in PRESETS.items():
         calc = McCabeThiele(**params, n_eq_points=101)
         result = calc.calculate()
@@ -41,7 +41,7 @@ def test_preset_values_valid():
 
 class TestGUI:
     def test_instantiate(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         assert app.app is not None
         assert app.app.get_application_id() == "com.vibe-omo.distillation"
@@ -49,7 +49,7 @@ class TestGUI:
         assert app._plotter is not None
 
     def test_all_methods_exist(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         for name in [
             "_on_activate", "_build_window", "_build_menu", "_build_ui",
@@ -61,13 +61,13 @@ class TestGUI:
             assert hasattr(app, name), f"Missing method: {name}"
 
     def test_plotter_integration(self):
-        from vibe_omo.distillation.gui import DistillationGUI
-        from vibe_omo.distillation.plotter import CairoPlotter
+        from vilatum.distillation.gui import DistillationGUI
+        from vilatum.distillation.plotter import CairoPlotter
         app = DistillationGUI()
         assert isinstance(app._plotter, CairoPlotter)
 
     def test_cairo_render_no_crash(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 100, 100)
         ctx = cairo.Context(surface)
@@ -86,7 +86,7 @@ skip_if_no_display = pytest.mark.skipif(
 @skip_if_no_display
 class TestGUIWindow:
     def test_window_creates(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
         assert app.window is not None
@@ -94,7 +94,7 @@ class TestGUIWindow:
         app.window.destroy()
 
     def test_window_default_size(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
         size = app.window.get_default_size()
@@ -102,7 +102,7 @@ class TestGUIWindow:
         app.window.destroy()
 
     def test_calculate_updates_labels(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
         app._calculate()
@@ -115,7 +115,7 @@ class TestGUIWindow:
         app.window.destroy()
 
     def test_load_preset(self):
-        from vibe_omo.distillation.gui import DistillationGUI, PRESETS
+        from vilatum.distillation.gui import DistillationGUI, PRESETS
         app = DistillationGUI()
         app._on_activate(app.app)
         app._load_preset("乙醇-水 (常压)")
@@ -124,13 +124,13 @@ class TestGUIWindow:
         app.window.destroy()
 
     def test_keyboard_shortcut_detection(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
         app.window.destroy()
 
     def test_toggle_chart_hides_right_box(self):
-        from vibe_omo.distillation.gui import DistillationGUI
+        from vilatum.distillation.gui import DistillationGUI
         app = DistillationGUI()
         app._on_activate(app.app)
 
