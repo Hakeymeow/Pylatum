@@ -5,7 +5,7 @@ requires-python = ">=3.14"
 [manifest]
 members = [
     "pylatum",
-    "vibe-omo",
+    "vilatum",
 ]
 
 [[package]]
@@ -126,9 +126,9 @@ wheels = [
 ]
 
 [[package]]
-name = "vibe-omo"
+name = "vilatum"
 version = "0.1.0"
-source = { editable = "vibe-omo" }
+source = { editable = "vilatum" }
 dependencies = [
     { name = "numpy" },
     { name = "pygobject" },

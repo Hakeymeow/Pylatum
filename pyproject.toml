@@ -12,5 +12,5 @@ default = true
 
 [tool.uv.workspace]
 members = [
-    "vibe-omo",
+    "vilatum",
 ]
