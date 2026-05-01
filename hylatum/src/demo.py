@@ -1,6 +1,6 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
-from calc import vlEqui, rectiOpline, qline, striOpline, cross, minR
+from hylatum.src.calc import vlEqui, rectiOpline, qline, striOpline, cross, minR
 
 from manim import *
 import numpy as np

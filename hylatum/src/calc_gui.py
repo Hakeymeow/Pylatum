@@ -1,6 +1,6 @@
 import math, sys, os
 import webview
-import calc
+from hylatum.src import calc
 
 
 def _sanitize(obj):

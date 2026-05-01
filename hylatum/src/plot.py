@@ -10,7 +10,7 @@ Usage:
 import math
 import sys
 import matplotlib.pyplot as plt
-from calc import calculate, minR
+from hylatum.src.calc import calculate, minR
 
 
 
