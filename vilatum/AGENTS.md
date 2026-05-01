@@ -12,19 +12,19 @@ Git commit message 遵守[约定式提交（Conventional Commits）](https://www
 <type>(<scope>): <description>
 ```
 
-**scope 字段必填**，且使用 `vo-*` 格式。例如：
+**scope 字段必填**，且使用 `vi-*` 格式。例如：
 
-- `vo-core`
-- `vo-api`
-- `vo-cli`
-- `vo-hooks`
+- `vi-core`
+- `vi-api`
+- `vi-cli`
+- `vi-hooks`
 
 完整示例：
 
 ```
-feat(vo-core): add user authentication middleware
-fix(vo-api): correct rate limit header parsing
-chore(vo-cli): update dev dependencies
+feat(vi-core): add user authentication middleware
+fix(vi-api): correct rate limit header parsing
+chore(vi-cli): update dev dependencies
 ```
 
 ## 3. 依赖管理
@@ -33,7 +33,7 @@ Agent 使用 `uv` 管理项目依赖。所有依赖操作（安装、更新、�
 
 ## 4. 工作区限定
 
-Agent 仅在 `vibe-omo` 工作区内执行文件读写、代码生成、命令执行等操作。不得在 `vibe-omo` 目录之外创建、修改或删除任何文件。
+Agent 仅在 `vilatum` 工作区内执行文件读写、代码生成、命令执行等操作。不得在 `vilatum` 目录之外创建、修改或删除任何文件。
 
 ### 例外：uv.lock
 
@@ -41,4 +41,4 @@ Agent 仅在 `vibe-omo` 工作区内执行文件读写、代码生成、命令�
 
 ## 5. README.md 内容保护
 
-Agent 不可修改 `README.md` 中 `## Session Record` 部分内的超链接。Agent 可覆盖或修改自己创建的内容，但 `## Session Record` 中的已有超链接不得被覆盖或变更。新内容应在 `## Session Record` 之后追加。
+Agent 不可修改 `README.md` 中 `## Record of Sessions` 部分内的超链接。Agent 可覆盖或修改自己创建的内容，但 `## Record of Sessions` 中的已有超链接不得被覆盖或变更。新内容应在 `## Record of Sessions` 之后追加。
