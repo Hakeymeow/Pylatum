@@ -7,10 +7,10 @@ requires-python = ">=3.14"
 dependencies = []
 
 [project.scripts]
-hy-cli = "hybrid.src.calc:main"
-hy-gui = "hybrid.src.calc_gui:main"
-hy-build = "hybrid.src.build:main"
-hy-render = "hybrid.src.demo:main"
+hy-cli = "hylatum.src.calc:main"
+hy-gui = "hylatum.src.calc_gui:main"
+hy-build = "hylatum.src.build:main"
+hy-render = "hylatum.src.demo:main"
 
 [build-system]
 requires = ["setuptools>=75"]
@@ -22,5 +22,5 @@ default = true
 
 [tool.uv.workspace]
 members = [
-    "hybrid",
+    "hylatum",
 ]

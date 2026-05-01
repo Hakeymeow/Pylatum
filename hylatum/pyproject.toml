@@ -1,5 +1,5 @@
 [project]
-name = "hybrid"
+name = "hylatum"
 version = "0.1.0"
 description = "A hybrid solution of artificial coding and vibe coding"
 requires-python = ">=3.14"
