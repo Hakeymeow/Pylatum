@@ -703,7 +703,7 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/2d/1c/31
 [[package]]
 name = "pylatum"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 
 [[package]]
 name = "pyobjc-core"
