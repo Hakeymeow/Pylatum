@@ -236,7 +236,7 @@ xvfb-run uv run pytest vilatum/tests/test_gui.py
 
 ## License
 
-[MIT]()
+[MIT](../LICENSE)
 
 ---
 
