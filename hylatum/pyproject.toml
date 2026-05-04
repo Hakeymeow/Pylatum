@@ -8,6 +8,20 @@ dependencies = [
     "plotly>=5.0.0",
 ]
 
+[project.scripts]
+hy-cli = "hylatum.src.calc:main"
+hy-gui = "hylatum.src.calc_gui:main"
+hy-build = "hylatum.src.build:main"
+hy-render = "hylatum.src.demo:main"
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hylatum*"]
+
 [dependency-groups]
 dev = [
     "manim>=0.20.1",
