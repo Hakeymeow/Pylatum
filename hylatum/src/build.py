@@ -42,7 +42,7 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
 def buildGUI() -> int:
     return _build_isolated(
         entry_point=os.path.join(SRC_DIR, "calc_gui.py"),
-        output_name="pylatum-gui",
+        output_name="hylatum-gui",
         extra_args=[
             *[f"--include-module={m}" for m in ["webview"]],
             *[f"--include-data-files={os.path.join(SRC_DIR, f)}=." for f in ["index.html"]],
@@ -53,16 +53,19 @@ def buildGUI() -> int:
 def buildCLI() -> int:
     return _build_isolated(
         entry_point=os.path.join(SRC_DIR, "calc.py"),
-        output_name="pylatum-cli",
+        output_name="hylatum-cli",
     )
 
 
 def main() -> None:
     parser = ArgumentParser()
-    parser.add_argument("--cli", "-c", action="store_true", help="build cli pylatum")
-    parser.add_argument("--gui", "-g", action="store_true", help="build gui pylatum")
+    parser.add_argument("-c", "--cli", action="store_true", help="build cli hylatum")
+    parser.add_argument("-g", "--gui", action="store_true", help="build gui hylatum")
     args = parser.parse_args()
 
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
     exit_code = 0
     if args.cli:
         exit_code = buildCLI() or exit_code
