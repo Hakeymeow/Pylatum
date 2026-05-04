@@ -85,15 +85,18 @@ uv run hy-render
 
 ```
 hylatum/
-├── src/
-│   ├── calc.py       # Core McCabe-Thiele algorithm (no dependencies)
-│   ├── calc_gui.py   # pywebview GUI application
-│   ├── index.html    # Frontend for the GUI (input form + Plotly chart)
-│   ├── demo.py       # Manim animation for educational demonstration
-│   ├── build.py      # Nuitka build script for standalone executables
-│   └── plot.py       # Reflux ratio vs. plate count analysis (Matplotlib)
-├── pyproject.toml    # Project metadata and dependencies
-├── AGENTS.md         # Development reference for AI agents
+├── hylatum/
+│   └── src/
+│       ├── calc.py       # Core McCabe-Thiele algorithm (no dependencies)
+│       ├── calc_gui.py   # pywebview GUI application
+│       ├── index.html    # Frontend for the GUI (input form + Plotly chart)
+│       ├── demo.py       # Manim animation for educational demonstration
+│       ├── plot.py       # Reflux ratio vs. plate count analysis (Matplotlib)
+│       └── build.py      # Nuitka build script for standalone executables
+├── asserts/
+│   └── gui.png           # GUI screenshot
+├── pyproject.toml        # Project metadata and dependencies
+├── AGENTS.md             # Development reference for AI agents
 └── README.md
 ```
 
@@ -212,10 +215,7 @@ This program consists of artificial coding and vibe coding. Following are the vi
 <details>
     <summary>Sessions</summary>
 
-- [**[/init-1]**](https://opncd.ai/share/MjX5DeGJ)
-- [**[/init-2]**](https://opncd.ai/share/q2A70T6N)
-- [**[/init-3]**](https://opncd.ai/share/vmATTxNu)
-
+- [**[/init-1]**](https://opncd.ai/share/MjX5DeGJ) [**[/init-2]**](https://opncd.ai/share/q2A70T6N) [**[/init-3]**](https://opncd.ai/share/vmATTxNu) [**[/init-4]**](https://opncd.ai/share/LHgiLAZd)
 - [**[webview-qt]**](https://opncd.ai/share/BTdJ3FIB): I implemented the core McCabe-Thiele algorithm and decided to add a GUI with vibe coding. The agent added pywebview without [gtk] or [qt] extras to the dependencies, which may not work on Linux according to the official documentation, and manually added PyQt and other backend dependencies. The GUI took a long time to load — I thought (because the agent told me) it was due to the Qt backend's poor performance (but after the refactor I found the real culprit was waiting for the CDN).
 
 - [**[webview-gtk]**](https://opncd.ai/share/AH5v4Pjk): There were other problems with the previous GUI. Its iteration visualization looked strange with two askew starting lines. The Qt backend dependencies were hard-coded in the source code, which prevented me from testing the GTK backend. It might be easier to build a new GUI, and I wanted a challenging task to see the advantage of the oh-my-openagent plugin.
