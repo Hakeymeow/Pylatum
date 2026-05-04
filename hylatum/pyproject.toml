@@ -1,0 +1,32 @@
+[project]
+name = "hylatum"
+version = "0.1.0"
+description = "A hybrid solution of artificial coding and vibe coding"
+requires-python = ">=3.14"
+dependencies = [
+    "pywebview[gtk]>=6.2.1",
+    "plotly>=5.0.0",
+]
+
+[project.scripts]
+hy-cli = "hylatum.src.calc:main"
+hy-gui = "hylatum.src.calc_gui:main"
+hy-build = "hylatum.src.build:main"
+hy-render = "hylatum.src.demo:main"
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hylatum*"]
+
+[dependency-groups]
+dev = [
+    "manim>=0.20.1",
+    "matplotlib>=3.10.9",
+]
+build = [
+    "nuitka[onefile]>=4.0.8",
+]

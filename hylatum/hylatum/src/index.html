@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>McCabe-Thiele Calculator</title>
+  <!-- PLOTLY_JS -->
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .inputs-row { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 20px; }
+    .input-group { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 140px; }
+    .input-group label { font-size: 12px; color: #333; text-align: center; }
+    .input-group input { width: 80px; padding: 8px; text-align: center; }
+    .controls { display: flex; flex-direction: column; gap: 15px; }
+    #calculate { width: 100%; padding: 12px; }
+    #result { padding: 15px; background: #f0f0f0; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .result-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .result-item label { font-size: 12px; color: #666; }
+    .result-item span { font-size: 16px; font-weight: bold; }
+    #chart { width: 100%; height: auto; aspect-ratio: 1 / 1; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <h1>McCabe-Thiele Calculator</h1>
+  <div class="inputs-row">
+    <div class="input-group">
+      <label>Reflux Ratio (R)</label>
+      <input type="number" id="R" step="0.1" min="0" value="2.0">
+    </div>
+    <div class="input-group">
+      <label>Feed Condition (q)</label>
+      <input type="number" id="q" step="0.01" min="-1" max="2" value="1.0">
+    </div>
+    <div class="input-group">
+      <label>Volatility (α)</label>
+      <input type="number" id="alpha" step="0.05" min="1.01" value="2.5">
+    </div>
+    <div class="input-group">
+      <label>Distillate (xD)</label>
+      <input type="number" id="xD" step="0.01" min="0" max="1" value="0.97">
+    </div>
+    <div class="input-group">
+      <label>Feed (xF)</label>
+      <input type="number" id="xF" step="0.01" min="0" max="1" value="0.45">
+    </div>
+    <div class="input-group">
+      <label>Bottoms (xW)</label>
+      <input type="number" id="xW" step="0.01" min="0" max="1" value="0.02">
+    </div>
+    <div class="input-group">
+      <label>Interation Limit</label>
+      <input type="number" id="inf" step="65536" min="1" value="65536">
+    </div>
+  </div>
+  <div class="controls">
+    <button id="calculate">Calculate</button>
+    <div id="result"></div>
+  </div>
+  <div id="chart"></div>
+  <script>
+    document.getElementById('calculate').addEventListener('click', async () => {
+      await doCalculate();
+    });
+
+    async function doCalculate() {
+      const R = parseFloat(document.getElementById('R').value);
+      const q = parseFloat(document.getElementById('q').value);
+      const alpha = parseFloat(document.getElementById('alpha').value);
+      const xD = parseFloat(document.getElementById('xD').value);
+      const xF = parseFloat(document.getElementById('xF').value);
+      const xW = parseFloat(document.getElementById('xW').value);
+      const inf = parseFloat(document.getElementById('inf').value);
+      function fmt(v, decimals) {
+        return v === null ? '\u221E' : (decimals != null ? v.toFixed(decimals) : v);
+      }
+      try {
+        const result = await window.pywebview.api.calculate(R, q, alpha, xD, xF, xW, inf);
+        document.getElementById('result').innerHTML = `
+          <div class="result-item"><label>Minium Reflux (Rm)</label><span>${fmt(result.Rm, 3)}</span></div>
+          <div class="result-item"><label>Total Plates (Nt)</label><span>${fmt(result.Nt)}</span></div>
+          <div class="result-item"><label>Feed Plate (Nf)</label><span>${fmt(result.Nf)}</span></div>
+          <div class="result-item"><label>Rectifying (Nr)</label><span>${fmt(result.Nr)}</span></div>
+          <div class="result-item"><label>Stripping (Ns)</label><span>${fmt(result.Ns)}</span></div>
+        `;
+        const chartData = await window.pywebview.api.plotly_chart(R, q, alpha, xD, xF, xW);
+        const layout = { ...chartData.layout, width: undefined, height: undefined };
+        Plotly.react('chart', chartData.data, layout, {responsive: true, displayModeBar: true});
+      } catch (e) {
+        document.getElementById('result').innerHTML = 'Error: ' + e;
+      }
+    }
+
+    if (window.pywebview && window.pywebview.api) {
+      doCalculate();
+    } else {
+      window.addEventListener('pywebviewready', doCalculate);
+    }
+  </script>
+</body>
+</html>
