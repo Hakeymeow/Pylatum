@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "A hybrid solution of artificial coding and vibe coding"
 requires-python = ">=3.14"
 dependencies = [
-    "pywebview[gtk]>=6.2.1",
+    "pywebview>=6.2.1",
+    "pygobject>=3.56.2; sys_platform == 'linux'",
     "plotly>=5.0.0",
 ]
 

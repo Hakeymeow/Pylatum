@@ -11,6 +11,10 @@ hy-cli = "hylatum.src.calc:main"
 hy-gui = "hylatum.src.calc_gui:main"
 hy-build = "hylatum.src.build:main"
 hy-render = "hylatum.src.demo:main"
+vi-gui = "vilatum.distillation.gui:main"
+
+[tool.setuptools.packages.find]
+exclude = ["hylatum", "vilatum"]
 
 [build-system]
 requires = ["setuptools>=75"]
