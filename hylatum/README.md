@@ -46,7 +46,7 @@ Running the GUI desktop application:
 ./hylatum-gui
 ```
 
-<img src="./asserts/gui.png" alt="Screenshot" width="500">
+<img src="https://github.com/Hakeymeow/Pylatum/releases/download/v0.0.0/hy-gui.png" alt="Screenshot" width="500">
 
 ## Quick Start
 
