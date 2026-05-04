@@ -83,6 +83,10 @@ def main():
     parser.add_argument("--xW", type=float, help="composition of bottom product (mol %%)", default=0.02)
     args = parser.parse_args()
 
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+
     Rm, n, m = calculate(args.R, args.q, args.alpha, args.xD, args.xF, args.xW, args.inf)
 
     print('\n' + "=" * 48)
