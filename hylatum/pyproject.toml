@@ -24,7 +24,7 @@ where = ["."]
 include = ["hylatum*"]
 
 [dependency-groups]
-dev = [
+demo = [
     "manim>=0.20.1",
     "matplotlib>=3.10.9",
 ]

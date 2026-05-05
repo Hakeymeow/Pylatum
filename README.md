@@ -36,6 +36,8 @@ uv run hy-cli --R 2.0 --q 1.0 --alpha 2.5 --xD 0.97 --xF 0.45 --xW 0.02
 uv run hy-gui
 
 # hylatum Manim animation demo
+# install manim from `demo` group
+uv sync --all-packages --group demo
 uv run hy-render
 
 # vilatum GUI (native GTK3 app with Cairo rendering)
