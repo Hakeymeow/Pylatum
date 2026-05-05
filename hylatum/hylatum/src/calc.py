@@ -75,7 +75,7 @@ def main():
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument("--inf", '-i', type=int, help="iteration limit", default=sys.maxsize)
-    parser.add_argument("--R", type=float, help="reflux ration", default=2.0)
+    parser.add_argument("--R", type=float, help="reflux ratio", default=2.0)
     parser.add_argument("--q", type=float, help="feed-thermal-state parameter", default=1.0)
     parser.add_argument("--alpha", type=float, help="relative volatility", default=2.5)
     parser.add_argument("--xD", type=float, help="composition of overhead product (mol %%)", default=0.97)
@@ -95,7 +95,7 @@ def main():
     print(f"{f"xD={args.xD}":<14}   {f"xF={args.xF}":<14}   {f"xW={args.xW}":<14}")
     print("=" * 48)
     print("Results\n---")
-    print(f"{"Rm (Minimum Reflux Ration)":<30} : {Rm:.12f}")
+    print(f"{"Rm (Minimum Reflux Ratio)":<30} : {Rm:.12f}")
     print(f"{"Nt (Total Number)":<30} : {n+m}")
     print(f"{"Nf (Feed Location)":<30} : {n+1}")
     print(f"{"Nr (Rectifying)":<30} : {n}")
