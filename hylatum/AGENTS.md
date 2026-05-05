@@ -41,7 +41,7 @@ All registered in `[project.scripts]` in both root and member `pyproject.toml`:
 | dev | `manim`, `matplotlib` | demo.py, plot.py |
 | build | `nuitka[onefile]` | build.py |
 
-`calc.py` has **zero** third-party dependencies — pure Python 3.14+ stdlib.
+`calc.py` has **zero** third-party dependencies — pure Python 3.13+ stdlib.
 Install via: `uv sync` (runtime), `uv sync --group dev` (+dev), `uv sync --group build` (+build).
 
 ## Package Manager
@@ -49,7 +49,7 @@ uv workspace member (single member: `hylatum`). Root at `/home/PomeloFish/Code/P
 Mirror: Tsinghua (`[[tool.uv.index]]` in root `pyproject.toml`).
 
 ## Python Version
-Requires Python >= 3.14. Set in `.python-version` and both `pyproject.toml`.
+Requires Python >= 3.13. Set in `.python-version` and both `pyproject.toml`.
 
 ## McCabe-Thiele Parameters
 | Symbol | Name | Validation |

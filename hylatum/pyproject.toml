@@ -2,7 +2,7 @@
 name = "hylatum"
 version = "0.1.0"
 description = "A hybrid solution of artificial coding and vibe coding"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "pywebview>=6.2.1",
     "pygobject>=3.54.0,<3.56; sys_platform == 'linux'",

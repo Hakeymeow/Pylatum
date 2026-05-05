@@ -89,7 +89,7 @@ vi-gui = "vilatum.distillation.gui:main"
 
 | 方面 | 详情 |
 |------|------|
-| Python | `>=3.14`（`.python-version` 锁定） |
+| Python | `>=3.13`（`.python-version` 锁定） |
 | 包管理 | `uv`（工作区根目录 `/home/PomeloFish/Code/Pylatum` 执行命令） |
 | 构建系统 | setuptools `>=75`，`build-backend = "setuptools.build_meta"` |
 | 包布局 | src-layout：代码在 `vilatum/src/vilatum/` |

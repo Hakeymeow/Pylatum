@@ -2,7 +2,7 @@
 name = "vilatum"
 version = "0.1.0"
 description = "A solution with pure vibe coding"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.0",
     "pygobject>=3.54.0,<3.56",

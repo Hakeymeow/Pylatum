@@ -26,7 +26,7 @@ Pre-built binaries of hylatum are available from the [release](https://github.co
 
 ### From Source Code
 ```bash
-# Prerequisites: Python >= 3.14, uv
+# Prerequisites: Python >= 3.13, uv
 uv sync --all-packages
 
 # hylatum CLI (stdlib only, no extra deps needed)

@@ -65,7 +65,7 @@ Download the pre-built executable for your platform from the
 
 ### From Source
 
-**Prerequisites:** Python >= 3.14, [uv](https://docs.astral.sh/uv/)
+**Prerequisites:** Python >= 3.13, [uv](https://docs.astral.sh/uv/)
 
 ```bash
 # Install all dependencies (including dev tools)

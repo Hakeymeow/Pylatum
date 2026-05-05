@@ -226,7 +226,7 @@ xvfb-run uv run pytest vilatum/tests/test_gui.py
 
 | Aspect | Details |
 |--------|---------|
-| Python | >= 3.14 |
+| Python | >= 3.13 |
 | Package manager | uv |
 | Build system | setuptools >= 75 |
 | Runtime deps | numpy >= 2.0, PyGObject >= 3.56.2 (with PyCairo) |

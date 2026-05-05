@@ -226,7 +226,7 @@ xvfb-run uv run pytest vilatum/tests/test_gui.py
 
 | 方面 | 详情 |
 |------|------|
-| Python | >= 3.14 |
+| Python | >= 3.13 |
 | 包管理 | uv |
 | 构建系统 | setuptools >= 75 |
 | 运行时依赖 | numpy >= 2.0, PyGObject >= 3.56.2 (含 PyCairo) |
