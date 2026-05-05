@@ -101,10 +101,18 @@ class Api:
         return _sanitize({"data": traces, "layout": layout})
 
 def main():
+
+    import tempfile, atexit, pathlib
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w")
+    tmp.write(build_html())
+    tmp.close()
+    atexit.register(lambda: os.unlink(tmp.name))
+
     api = Api()
     webview.create_window(
         "McCabe-Thiele Calculator",
-        html=build_html(),
+        url=pathlib.Path(tmp.name).as_uri(),
         js_api=api
     )
     webview.start()
