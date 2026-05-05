@@ -5,7 +5,7 @@ description = "A hybrid solution of artificial coding and vibe coding"
 requires-python = ">=3.14"
 dependencies = [
     "pywebview>=6.2.1",
-    "pygobject>=3.56.2; sys_platform == 'linux'",
+    "pygobject>=3.54.0,<3.56; sys_platform == 'linux'",
     "plotly>=5.0.0",
 ]
 
