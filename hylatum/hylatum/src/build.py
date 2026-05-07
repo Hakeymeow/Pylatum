@@ -13,7 +13,10 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
             ["uv", "venv", tmp_venv],
             cwd=PROJECT_ROOT_DIR, check=True, capture_output=True,
         )
-        python_bin = os.path.join(tmp_venv, "bin", "python")
+        python_bin = os.path.join(tmp_venv, 
+            "Scripts" if sys.platform == "win32" else "bin", 
+            "python" + ".exe" if sys.platform == "win32" else ""
+        )
 
         subprocess.run(
             ["uv", "pip", "install", "-e", PROJECT_ROOT_DIR, "--python", python_bin],
@@ -31,6 +34,19 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
         if extra_args:
             cmd.extend(extra_args)
         cmd += [f"--output-filename={output_name}", entry_point]
+
+        if sys.platform == "win32":
+            # pywebview plugin of nuitka has some problems on Windows
+            # so the webview dependency needs to solve manually
+            cmd += [
+                "--disable-plugin=pywebview",
+                "--include-module=webview.platforms.win32"
+            ]
+            cmd += [
+                f"--nofollow-import-to=webview.platforms.{p}" for p in [
+                    "android", "gtk", "qt", "cocoa"
+                ]
+            ]
 
         print("\x1b[1;32m", "Building (isolated):", " ".join(cmd), "\x1b[0m")
         os.makedirs(BUILD_DIR, exist_ok=True)
