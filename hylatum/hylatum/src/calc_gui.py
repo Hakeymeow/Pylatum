@@ -26,7 +26,7 @@ def build_html() -> str:
     from plotly.offline import get_plotlyjs
 
     html_path = get_resource_path("index.html")
-    with open(html_path) as f:
+    with open(html_path, encoding="utf-8") as f:
         html = f.read()
 
     return html.replace(
@@ -104,7 +104,7 @@ def main():
 
     import tempfile, atexit, pathlib
 
-    tmp = tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w")
+    tmp = tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w", encoding="utf-8")
     tmp.write(build_html())
     tmp.close()
     atexit.register(lambda: os.unlink(tmp.name))
