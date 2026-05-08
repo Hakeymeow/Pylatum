@@ -15,7 +15,7 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
         )
         python_bin = os.path.join(tmp_venv, 
             "Scripts" if sys.platform == "win32" else "bin", 
-            "python" + ".exe" if sys.platform == "win32" else ""
+            "python" + (".exe" if sys.platform == "win32" else "")
         )
 
         subprocess.run(
