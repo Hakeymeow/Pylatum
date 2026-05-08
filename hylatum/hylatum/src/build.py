@@ -35,19 +35,6 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
             cmd.extend(extra_args)
         cmd += [f"--output-filename={output_name}", entry_point]
 
-        if sys.platform == "win32":
-            # pywebview plugin of nuitka has some problems on Windows
-            # so the webview dependency needs to solve manually
-            cmd += [
-                "--disable-plugin=pywebview",
-                "--include-module=webview.platforms.win32"
-            ]
-            cmd += [
-                f"--nofollow-import-to=webview.platforms.{p}" for p in [
-                    "android", "gtk", "qt", "cocoa"
-                ]
-            ]
-
         print("\x1b[1;32m", "Building (isolated):", " ".join(cmd), "\x1b[0m")
         os.makedirs(BUILD_DIR, exist_ok=True)
         return subprocess.run(cmd, cwd=BUILD_DIR).returncode
@@ -56,13 +43,27 @@ def _build_isolated(entry_point: str, output_name: str, extra_args: list[str] | 
 
 
 def buildGUI() -> int:
+    extra_args = [
+        *[f"--include-module={m}" for m in ["webview"]],
+        *[f"--include-data-files={os.path.join(SRC_DIR, f)}={f}" for f in ["index.html"]],
+    ]
+    if sys.platform == "win32":
+        # pywebview plugin of nuitka has some problems on Windows
+        # so the webview dependency needs to solve manually
+        extra_args += [
+            "--disable-plugin=pywebview",
+            "--include-module=webview.platforms.win32",
+            "--windows-disable-console",
+            *[
+                f"--nofollow-import-to=webview.platforms.{p}" for p in [
+                    "android", "gtk", "qt", "cocoa"
+                ]                
+            ]
+        ]
     return _build_isolated(
         entry_point=os.path.join(SRC_DIR, "calc_gui.py"),
         output_name="hylatum-gui",
-        extra_args=[
-            *[f"--include-module={m}" for m in ["webview"]],
-            *[f"--include-data-files={os.path.join(SRC_DIR, f)}=." for f in ["index.html"]],
-        ],
+        extra_args=extra_args
     )
 
 
