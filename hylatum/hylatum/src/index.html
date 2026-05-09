@@ -17,6 +17,20 @@
     .result-item label { font-size: 12px; color: #666; }
     .result-item span { font-size: 16px; font-weight: bold; }
     #chart { width: 100%; height: auto; aspect-ratio: 1 / 1; margin: 0 auto; }
+
+    /* Interactive mode */
+    #mode-toggle {
+      padding: 12px; width: 100%; cursor: pointer;
+      background: #95a5a6; color: white; border: none; border-radius: 4px;
+      font-size: 14px; font-weight: bold; transition: background 0.2s;
+    }
+    #mode-toggle.active { background: #e67e22; }
+    #interactive-badge {
+      display: none; padding: 8px 16px; background: #e67e22; color: white;
+      border-radius: 4px; font-size: 14px; font-weight: bold; text-align: center; margin-top: 8px;
+    }
+    #interactive-badge .hint { font-size: 11px; font-weight: normal; opacity: 0.8; }
+    .input-group input:disabled { background: #ecf0f1; color: #7f8c8d; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -54,6 +68,8 @@
   <div class="controls">
     <button id="calculate">Calculate</button>
     <div id="result"></div>
+    <button id="mode-toggle">Interactive</button>
+    <div id="interactive-badge"></div>
   </div>
   <div id="chart"></div>
   <script>
@@ -94,6 +110,164 @@
     } else {
       window.addEventListener('pywebviewready', doCalculate);
     }
+
+    // ===== INTERACTIVE MODE =====
+    var isInteractive = false;
+    var activeParamIdx = 0;
+    var PARAM_NAMES = ['R', 'q', 'alpha'];
+    var pendingBridgeCall = false;
+    var lastMousePos = null;
+    var lastThrottleTime = 0;
+    var THROTTLE_MS = 100;
+
+    function getParamLabel(name) {
+      return {R:'Reflux Ratio (R)', q:'Feed Condition (q)', alpha:'Volatility (\u03b1)'}[name] || name;
+    }
+
+    function updateBadge() {
+      var param = PARAM_NAMES[activeParamIdx];
+      var val = parseFloat(document.getElementById(param).value);
+      document.getElementById('interactive-badge').innerHTML =
+        '<span>Active: <strong>' + getParamLabel(param) + '</strong> = ' + (isNaN(val) ? '?' : val.toFixed(4)) + '</span>' +
+        '<span class="hint"> &bull; TAB to switch &bull; Move mouse over chart</span>';
+    }
+
+    async function doInteractiveUpdate(xm, ym) {
+      if (pendingBridgeCall) return;
+      pendingBridgeCall = true;
+      try {
+        var R = parseFloat(document.getElementById('R').value);
+        var q = parseFloat(document.getElementById('q').value);
+        var alpha = parseFloat(document.getElementById('alpha').value);
+        var xD = parseFloat(document.getElementById('xD').value);
+        var xF = parseFloat(document.getElementById('xF').value);
+        var xW = parseFloat(document.getElementById('xW').value);
+        var inf = parseFloat(document.getElementById('inf').value);
+
+        var data = await window.pywebview.api.interactive_chart(
+          R, q, alpha, xD, xF, xW, inf, PARAM_NAMES[activeParamIdx], xm, ym
+        );
+
+        // Highlight active trace
+        var hlMap = {R:2, q:3, alpha:1};
+        var hlIdx = hlMap[PARAM_NAMES[activeParamIdx]];
+        var traces = data.data.map(function(t, i) {
+          var newLine = (t.line || {});
+          if (i === hlIdx) newLine.width = 4;
+          else if (i !== 0 && i !== 5) newLine.width = 2;
+          return { ...t, line: newLine };
+        });
+
+        var layout = { ...data.layout, width: undefined, height: undefined };
+        await Plotly.react('chart', traces, layout, { responsive: true, displayModeBar: true });
+
+        // Warning annotation for below-minimum reflux
+        if (data.result.Rm != null && data.result.Nt === null) {
+          Plotly.relayout('chart', { annotations: [{
+            x: xm, y: ym+0.1,
+            text: '\u26A0 Below min reflux (Rm=' + data.result.Rm.toFixed(4) + ')',
+            showarrow: false,
+            font: { color: '#d35400', size: 12, family: 'Arial' },
+            bgcolor: '#ffeaa7',
+            bordercolor: '#d35400',
+            borderwidth: 1,
+            borderpad: 4,
+            opacity: 0.9,
+            xref: 'x', yref: 'y',
+            xanchor: 'left', yanchor: 'bottom',
+            ax: 20, ay: -20
+          }]});
+        } else {
+          Plotly.relayout('chart', { annotations: [] });
+        }
+
+        // Re-attach mouse handler after Plotly redraw
+        setTimeout(attachMouseHandler, 50);
+
+        // Update badge and input
+        var pn = PARAM_NAMES[activeParamIdx];
+        var pv = data.params[pn];
+        document.getElementById('interactive-badge').innerHTML =
+          '<span>Active: <strong>' + getParamLabel(pn) + '</strong> = ' + (pv != null ? pv.toFixed(4) : '?') + '</span>' +
+          '<span class="hint"> &bull; TAB to switch &bull; Move mouse over chart</span>';
+        document.getElementById(pn).value = pv;
+
+        // Update results
+        function fmt(v, d) { return v === null ? '\u221E' : (d != null ? v.toFixed(d) : v); }
+        document.getElementById('result').innerHTML =
+          '<div class="result-item"><label>Min Reflux (Rm)</label><span>' + fmt(data.result.Rm, 3) + '</span></div>' +
+          '<div class="result-item"><label>Total Plates (Nt)</label><span>' + fmt(data.result.Nt) + '</span></div>' +
+          '<div class="result-item"><label>Feed Plate (Nf)</label><span>' + fmt(data.result.Nf) + '</span></div>' +
+          '<div class="result-item"><label>Rectifying (Nr)</label><span>' + fmt(data.result.Nr) + '</span></div>' +
+          '<div class="result-item"><label>Stripping (Ns)</label><span>' + fmt(data.result.Ns) + '</span></div>';
+      } catch (e) {
+        console.error('Interactive update failed:', e);
+      }
+      pendingBridgeCall = false;
+    }
+
+    function onChartMouseMove(event) {
+      if (!isInteractive) return;
+      var gd = document.getElementById('chart');
+      if (!gd._fullLayout || !gd._fullLayout.xaxis) return;
+      var rect = gd.getBoundingClientRect();
+      var px = event.clientX - rect.left;
+      var py = event.clientY - rect.top;
+      var xaxis = gd._fullLayout.xaxis;
+      var yaxis = gd._fullLayout.yaxis;
+      var xm = xaxis.p2d(px - xaxis._offset);
+      var ym = yaxis.p2d(py - yaxis._offset);
+      if (xm < 0 || xm > 1 || ym < 0 || ym > 1) return;
+      lastMousePos = { x: xm, y: ym };
+      var now = Date.now();
+      if (now - lastThrottleTime < THROTTLE_MS) return;
+      lastThrottleTime = now;
+      doInteractiveUpdate(xm, ym);
+    }
+
+    function attachMouseHandler() {
+      var gd = document.getElementById('chart');
+      if (gd) {
+        gd.removeEventListener('mousemove', onChartMouseMove);
+        gd.addEventListener('mousemove', onChartMouseMove);
+      }
+    }
+
+    // Toggle button
+    document.getElementById('mode-toggle').addEventListener('click', function() {
+      isInteractive = !isInteractive;
+      this.textContent = isInteractive ? 'Switch to Static' : 'Interactive';
+      this.classList.toggle('active', isInteractive);
+      document.getElementById('interactive-badge').style.display = isInteractive ? 'block' : 'none';
+      var inputs = document.querySelectorAll('.input-group input');
+      for (var i = 0; i < inputs.length; i++) { inputs[i].disabled = isInteractive; }
+      if (isInteractive) {
+        updateBadge();
+        attachMouseHandler();
+        if (lastMousePos) doInteractiveUpdate(lastMousePos.x, lastMousePos.y);
+      }
+    });
+
+    // Keyboard controls: TAB to cycle params, ESC to exit interactive mode
+    document.addEventListener('keydown', function(e) {
+      if (!isInteractive) return;
+      if (e.key === 'Escape') {
+        document.getElementById('mode-toggle').click();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      e.preventDefault();
+      if (e.shiftKey) {
+        activeParamIdx = (activeParamIdx - 1 + PARAM_NAMES.length) % PARAM_NAMES.length;
+      } else {
+        activeParamIdx = (activeParamIdx + 1) % PARAM_NAMES.length;
+      }
+      updateBadge();
+      if (lastMousePos) doInteractiveUpdate(lastMousePos.x, lastMousePos.y);
+    });
+
+    // Attach mouse handler after page loads
+    setTimeout(attachMouseHandler, 500);
   </script>
 </body>
 </html>

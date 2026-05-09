@@ -46,7 +46,8 @@ class Api:
             "Ns": m
         })
 
-    def plotly_chart(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> dict:
+    def _build_chart_data(self, R, q, alpha, xD, xF, xW) -> tuple[list, dict]:
+        """Build Plotly traces and layout. Returns (traces, layout) without sanitization."""
         rl = calc.rectiOpline(R=R, xD=xD)
         ql = calc.qline(q=q, xF=xF)
         sl = calc.striOpline(rl=rl, ql=ql, xW=xW)
@@ -68,8 +69,11 @@ class Api:
         stepping_x, stepping_y = [xD], [xD]
         xe, _ = calc.cross(rl, ql)
         xi, yi = vle(xD), xD
+        MAX_STEPS = 1000
 
         while xi > xe:
+            if len(stepping_x) > MAX_STEPS * 2:
+                break
             stepping_x.append(xi)
             stepping_y.append(yi)
             xj, yj = calc.cross(rl, lambda x, y: x-xi)
@@ -78,6 +82,8 @@ class Api:
             xi, yi = vle(yj), yj
 
         while xi > xW:
+            if len(stepping_x) > MAX_STEPS * 2:
+                break
             stepping_x.append(xi)
             stepping_y.append(yi)
             xj, yj = calc.cross(sl, lambda x, y: x-xi)
@@ -98,7 +104,49 @@ class Api:
             legend=dict(x=1.02, y=1)
         )
 
+        return traces, layout
+
+    def plotly_chart(self, R: float, q: float, alpha: float, xD: float, xF: float, xW: float) -> dict:
+        traces, layout = self._build_chart_data(R, q, alpha, xD, xF, xW)
         return _sanitize({"data": traces, "layout": layout})
+
+    def interactive_chart(self, R, q, alpha, xD, xF, xW, inf, param_name, mouse_x, mouse_y) -> dict:
+        param_name = param_name.strip().lower()
+        xm, ym = mouse_x, mouse_y
+
+        if param_name == 'r':
+            if abs(xm - ym) < 1e-12 or xm >= xD or ym <= xm:
+                pass  # keep current R
+            else:
+                derived = (ym - xD) / (xm - ym)
+                if derived >= 0:
+                    R = derived
+        elif param_name == 'q':
+            if abs(ym - xm) < 1e-12:
+                q = 1.0
+            else:
+                q = (ym - xF) / (ym - xm)
+        elif param_name == 'alpha':
+            if xm <= 0 or xm >= 1 or ym <= 0 or ym >= 1:
+                pass  # keep current alpha
+            else:
+                derived = ym * (1 - xm) / (xm * (1 - ym))
+                if derived <= 1:
+                    alpha = 1.01
+                elif 0 < xm < 1 and ym < xm:
+                    alpha = 1.01
+                else:
+                    alpha = derived
+
+        traces, layout = self._build_chart_data(R, q, alpha, xD, xF, xW)
+        Rm, n, m = calc.calculate(R, q, alpha, xD, xF, xW, inf)
+        result = {"Rm": Rm, "Nt": n + m, "Nf": n + 1, "Nr": n, "Ns": m}
+        return _sanitize({
+            "data": traces,
+            "layout": layout,
+            "result": result,
+            "params": {"R": R, "q": q, "alpha": alpha}
+        })
 
 def main():
 

@@ -230,7 +230,9 @@ This program consists of artificial coding and vibe coding. Following are the vi
 
 - [**[nuitka-venv]**](https://opncd.ai/share/zGEp5R2l): It struck me that I hadn't included plotly in `build.py`, yet the GUI program worked — so I assumed Nuitka was packaging the entire virtual environment. I removed manim and matplotlib and rebuilt the program. It still worked fine and the size did decrease. I then asked the agent to verify this and figure out what was going on.
 
-- [**[ModuleError]**](https://opncd.ai/share/HEZb6N4Q): The hylatum-gui binary could not found module named 'hylatum'. 
+- [**[ModuleError]**](https://opncd.ai/share/HEZb6N4Q): The hylatum-gui binary could not found module named 'hylatum'.
+
+- [**[Interactive-Diagram]**](https://opncd.ai/share/LmuAbKpd): Add an interactive mode.
 
 </details>
 
